@@ -55,4 +55,36 @@ class CancelTransactionActionTest extends PHPUnit_Framework_TestCase
         $request->shouldHaveReceived('getModel')->twice();
         $api->shouldHaveReceived('cancelTransaction')->with($input)->once();
     }
+
+    /**
+     * @expectedException Payum\Core\Exception\UnsupportedApiException
+     */
+    public function test_throw_exception_when_api_is_error()
+    {
+        /*
+        |------------------------------------------------------------
+        | Arrange
+        |------------------------------------------------------------
+        */
+
+        $request = m::spy('PayumTW\Collect\Request\Api\CancelTransaction, ArrayAccess');
+        $api = m::spy('stdClass');
+
+        /*
+        |------------------------------------------------------------
+        | Act
+        |------------------------------------------------------------
+        */
+
+
+
+        $action = new CancelTransactionAction();
+        $action->setApi($api);
+
+        /*
+        |------------------------------------------------------------
+        | Assert
+        |------------------------------------------------------------
+        */
+    }
 }

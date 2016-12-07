@@ -60,4 +60,36 @@ class CreateTransactionActionTest extends PHPUnit_Framework_TestCase
         $api->shouldHaveReceived('getApiEndpoint')->once();
         $api->shouldHaveReceived('createTransaction')->with((array) $details)->once();
     }
+
+    /**
+     * @expectedException Payum\Core\Exception\UnsupportedApiException
+     */
+    public function test_throw_exception_when_api_is_error()
+    {
+        /*
+        |------------------------------------------------------------
+        | Arrange
+        |------------------------------------------------------------
+        */
+
+        $request = m::spy('PayumTW\Collect\Request\Api\CancelTransaction, ArrayAccess');
+        $api = m::spy('stdClass');
+
+        /*
+        |------------------------------------------------------------
+        | Act
+        |------------------------------------------------------------
+        */
+
+
+
+        $action = new CreateTransactionAction();
+        $action->setApi($api);
+
+        /*
+        |------------------------------------------------------------
+        | Assert
+        |------------------------------------------------------------
+        */
+    }
 }
