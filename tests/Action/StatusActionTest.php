@@ -230,47 +230,58 @@ class StatusActionTest extends PHPUnit_Framework_TestCase
         $request->shouldHaveReceived('markFailed')->once();
     }
 
-    public function test_apn_status_is_b() {
+    public function test_apn_status_is_b()
+    {
         $this->validateApnStatus('B', 'markCaptured');
     }
 
-    public function test_apn_status_is_o() {
+    public function test_apn_status_is_o()
+    {
         $this->validateApnStatus('O', 'markSuspended');
     }
 
-    public function test_apn_status_is_e() {
+    public function test_apn_status_is_e()
+    {
         $this->validateApnStatus('E', 'markCaptured');
     }
 
-    public function test_apn_status_is_f() {
+    public function test_apn_status_is_f()
+    {
         $this->validateApnStatus('F', 'markFailed');
     }
 
-    public function test_apn_status_is_d() {
+    public function test_apn_status_is_d()
+    {
         $this->validateApnStatus('D', 'markExpired');
     }
 
-    public function test_apn_status_is_p() {
+    public function test_apn_status_is_p()
+    {
         $this->validateApnStatus('P', 'markCaptured');
     }
 
-    public function test_apn_status_is_m() {
+    public function test_apn_status_is_m()
+    {
         $this->validateApnStatus('M', 'markCanceled');
     }
 
-    public function test_apn_status_is_n() {
+    public function test_apn_status_is_n()
+    {
         $this->validateApnStatus('N', 'markFailed');
     }
 
-    public function test_apn_status_is_q() {
+    public function test_apn_status_is_q()
+    {
         $this->validateApnStatus('Q', 'markRefunded');
     }
 
-    public function test_apn_status_is_r() {
+    public function test_apn_status_is_r()
+    {
         $this->validateApnStatus('R', 'markFailed');
     }
 
-    public function validateApnStatus($status, $marked) {
+    public function validateApnStatus($status, $marked)
+    {
         /*
         |------------------------------------------------------------
         | Arrange

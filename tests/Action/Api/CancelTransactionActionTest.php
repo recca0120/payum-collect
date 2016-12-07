@@ -76,8 +76,6 @@ class CancelTransactionActionTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-
-
         $action = new CancelTransactionAction();
         $action->setApi($api);
 

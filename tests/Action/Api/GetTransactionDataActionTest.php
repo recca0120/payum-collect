@@ -119,8 +119,6 @@ class GetTransactionDataActionTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-
-
         $action = new GetTransactionDataAction();
         $action->setApi($api);
 

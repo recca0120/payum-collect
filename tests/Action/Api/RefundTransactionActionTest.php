@@ -77,8 +77,6 @@ class RefundTransactionActionTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-
-
         $action = new RefundTransactionAction();
         $action->setApi($api);
 
