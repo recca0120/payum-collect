@@ -11,7 +11,7 @@ class GetTransactionDataActionTest extends PHPUnit_Framework_TestCase
         m::close();
     }
 
-    public function test_execute()
+    public function test_get_transaction_data()
     {
         /*
         |------------------------------------------------------------
@@ -21,15 +21,12 @@ class GetTransactionDataActionTest extends PHPUnit_Framework_TestCase
 
         $request = m::spy('PayumTW\Collect\Request\Api\GetTransactionData, ArrayAccess');
         $api = m::spy('PayumTW\Collect\Api');
-        $input = [
-            'cust_order_no' => 'foo.cust_order_no',
-            'order_amount' => 'foo.order_amount',
-            'refund_amount' => 'foo.refund_amount',
-        ];
-        $details = new ArrayObject($input);
+
+        $details = m::mock(new ArrayObject());
 
         $endpoint = 'foo.endpoint';
-        $data = ['foo.data'];
+
+        $data = ['status' => '1'];
 
         /*
         |------------------------------------------------------------
@@ -41,7 +38,7 @@ class GetTransactionDataActionTest extends PHPUnit_Framework_TestCase
             ->shouldReceive('getModel')->andReturn($details);
 
         $api
-            ->shouldReceive('getTransactionData')->andReturn($details);
+            ->shouldReceive('getTransactionData')->andReturn($data);
 
         $action = new GetTransactionDataAction();
         $action->setApi($api);
@@ -54,6 +51,51 @@ class GetTransactionDataActionTest extends PHPUnit_Framework_TestCase
 
         $action->execute($request);
         $request->shouldHaveReceived('getModel')->twice();
-        $api->shouldHaveReceived('getTransactionData')->with($input)->once();
+        $api->shouldHaveReceived('getTransactionData')->once();
+        $details->shouldHaveReceived('replace')->once();
+    }
+
+    public function test_get_transaction_data_when_status_is_error()
+    {
+        /*
+        |------------------------------------------------------------
+        | Arrange
+        |------------------------------------------------------------
+        */
+
+        $request = m::spy('PayumTW\Collect\Request\Api\GetTransactionData, ArrayAccess');
+        $api = m::spy('PayumTW\Collect\Api');
+
+        $details = m::mock(new ArrayObject());
+
+        $endpoint = 'foo.endpoint';
+
+        $data = ['status' => '-1'];
+
+        /*
+        |------------------------------------------------------------
+        | Act
+        |------------------------------------------------------------
+        */
+
+        $request
+            ->shouldReceive('getModel')->andReturn($details);
+
+        $api
+            ->shouldReceive('getTransactionData')->andReturn($data);
+
+        $action = new GetTransactionDataAction();
+        $action->setApi($api);
+
+        /*
+        |------------------------------------------------------------
+        | Assert
+        |------------------------------------------------------------
+        */
+
+        $action->execute($request);
+        $request->shouldHaveReceived('getModel')->twice();
+        $api->shouldHaveReceived('getTransactionData')->once();
+        $details->shouldNotHaveReceived('replace');
     }
 }

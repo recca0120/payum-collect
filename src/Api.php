@@ -217,6 +217,16 @@ class Api
     {
         $details = [];
 
+        if (isset($params['response']) === true) {
+            if ($this->verifyHash($params['response']) === false) {
+                $params['status'] = '-1';
+
+                return $params;
+            }
+
+            $details = array_merge($details, $params['response']);
+        }
+
         return $details;
     }
 
@@ -229,28 +239,51 @@ class Api
      */
     public function verifyHash(array $params)
     {
-        if ($params['ret'] === 'OK') {
-            $data = [
-                $params['order_amount'],
-                $params['send_time'],
-                $params['ret'],
-                $params['acquire_time'],
-                $params['auth_code'],
-                $params['card_no'],
-                $params['notify_time'],
-                $params['cust_order_no'],
-            ];
-        } else {
-            $data = [
-                $params['order_amount'],
-                $params['send_time'],
-                $params['ret'],
-                $params['notify_time'],
-                $params['cust_order_no'],
-            ];
+        $hashKey = 'chk';
+
+        if (isset($params['status']) === true) {
+            $hashKey = 'checksum';
+            $data = $data = $this->only($params, [
+                'api_id',
+                'trans_id',
+                'amount',
+                'status',
+                'nonce',
+            ]);
+        } else if ($params['ret'] === 'OK') {
+            $data = $this->only($params, [
+                'order_amount',
+                'send_time',
+                'ret',
+                'acquire_time',
+                'auth_code',
+                'card_no',
+                'notify_time',
+                'cust_order_no',
+            ]);
+
+        } else if ($params['ret'] === 'FAIL'){
+            $data = $data = $this->only($params, [
+                'order_amount',
+                'send_time',
+                'ret',
+                'notify_time',
+                'cust_order_no',
+            ]);
         }
 
-        return $params['chk'] === $this->calculateHash($data);
+        return $params[$hashKey] === $this->calculateHash($data);
+    }
+
+    protected function only($array, $keys) {
+        $results = [];
+        foreach ($keys as $key) {
+            if (isset($array[$key]) === true) {
+                $results[$key] = $array[$key];
+            }
+        }
+
+        return $results;
     }
 
     /**
@@ -262,8 +295,15 @@ class Api
      */
     protected function calculateHash($params)
     {
-        return md5(implode('$', array_merge([
-            $this->options['hash_base'],
-        ], $params)));
+        if (isset($params['status']) === true) {
+            $symbol = ':';
+        } else {
+            $symbol = '$';
+            $params = array_merge([
+                $this->options['hash_base'],
+            ], $params);
+        }
+
+        return md5(implode($symbol, $params));
     }
 }
