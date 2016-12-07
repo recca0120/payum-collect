@@ -219,12 +219,12 @@ class Api
 
         if (isset($params['response']) === true) {
             if ($this->verifyHash($params['response']) === false) {
-                $params['status'] = '-1';
+                $details['status'] = '-1';
 
-                return $params;
+                return $details;
+            } else {
+                $details = array_merge($details, $params['response']);
             }
-
-            $details = array_merge($details, $params['response']);
         }
 
         return $details;
