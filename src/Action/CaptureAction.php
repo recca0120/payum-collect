@@ -36,6 +36,12 @@ class CaptureAction implements ActionInterface, GatewayAwareInterface
             return;
         }
 
+        $token = $request->getToken();
+        $targetUrl = $token->getTargetUrl();
+        $targetUrl = substr($targetUrl, 0, strrpos($targetUrl, '/'));
+        $token->setTargetUrl($targetUrl);
+        $token->save();
+
         $this->gateway->execute(new CreateTransaction($details));
     }
 

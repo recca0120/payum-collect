@@ -21,11 +21,15 @@ class CaptureActionTest extends PHPUnit_Framework_TestCase
 
         $request = m::spy('Payum\Core\Request\Capture');
         $gateway = m::spy('Payum\Core\GatewayInterface');
+        $token = m::spy('Payum\Core\Model\TokenInterface');
+
         $details = new ArrayObject([
             'cust_order_no' => 'foo.cust_order_no',
             'order_amount' => 'foo.order_amount',
             'order_detail' => 'foo.order_detail',
         ]);
+
+        $targetUrl = 'http://localhost/payment/capture/FEDHD1o-fvtpZqM6QvtNsy_qoLX_8x4QXvfyE94mIZc';
 
         /*
         |------------------------------------------------------------
@@ -34,7 +38,11 @@ class CaptureActionTest extends PHPUnit_Framework_TestCase
         */
 
         $request
-            ->shouldReceive('getModel')->andReturn($details);
+            ->shouldReceive('getModel')->andReturn($details)
+            ->shouldReceive('getToken')->andReturn($token);
+
+        $token
+            ->shouldReceive('getTargetUrl')->andReturn($targetUrl);
 
         $action = new CaptureAction();
         $action->setGateway($gateway);
@@ -48,6 +56,10 @@ class CaptureActionTest extends PHPUnit_Framework_TestCase
 
         $request->shouldHaveReceived('getModel')->twice();
         $gateway->shouldHaveReceived('execute')->with(m::type('Payum\Core\Request\GetHttpRequest'))->once();
+        $request->shouldHaveReceived('getToken')->once();
+        $token->shouldHaveReceived('getTargetUrl')->once();
+        $token->shouldHaveReceived('setTargetUrl')->with('http://localhost/payment/capture')->once();
+        $token->shouldHaveReceived('save')->once();
         $gateway->shouldHaveReceived('execute')->with(m::type('PayumTW\Collect\Request\Api\CreateTransaction'))->once();
     }
 
