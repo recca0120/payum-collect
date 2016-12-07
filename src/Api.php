@@ -250,7 +250,7 @@ class Api
                 'status',
                 'nonce',
             ]);
-        } else if ($params['ret'] === 'OK') {
+        } elseif ($params['ret'] === 'OK') {
             $data = $this->only($params, [
                 'order_amount',
                 'send_time',
@@ -261,8 +261,7 @@ class Api
                 'notify_time',
                 'cust_order_no',
             ]);
-
-        } else if ($params['ret'] === 'FAIL'){
+        } elseif ($params['ret'] === 'FAIL') {
             $data = $data = $this->only($params, [
                 'order_amount',
                 'send_time',
@@ -275,7 +274,8 @@ class Api
         return $params[$hashKey] === $this->calculateHash($data);
     }
 
-    protected function only($array, $keys) {
+    protected function only($array, $keys)
+    {
         $results = [];
         foreach ($keys as $key) {
             if (isset($array[$key]) === true) {

@@ -378,7 +378,7 @@ class ApiTest extends PHPUnit_Framework_TestCase
         ];
 
         $details = [
-            'response' => $returnValue
+            'response' => $returnValue,
         ];
 
         /*
@@ -388,7 +388,6 @@ class ApiTest extends PHPUnit_Framework_TestCase
         */
 
         $api = new Api($options, $httpClient, $messageFactory);
-
 
         /*
         |------------------------------------------------------------
@@ -442,7 +441,7 @@ class ApiTest extends PHPUnit_Framework_TestCase
         ];
 
         $details = [
-            'response' => $returnValue
+            'response' => $returnValue,
         ];
 
         /*
@@ -453,7 +452,6 @@ class ApiTest extends PHPUnit_Framework_TestCase
 
         $api = new Api($options, $httpClient, $messageFactory);
 
-
         /*
         |------------------------------------------------------------
         | Assert
@@ -462,7 +460,7 @@ class ApiTest extends PHPUnit_Framework_TestCase
 
         $this->assertSame([
             'response' => $returnValue,
-            'status' => '-1'
+            'status' => '-1',
         ], $api->getTransactionData($details));
     }
 
@@ -520,7 +518,7 @@ class ApiTest extends PHPUnit_Framework_TestCase
         ];
 
         $details = [
-            'response' => $returnValue
+            'response' => $returnValue,
         ];
 
         /*
@@ -530,7 +528,6 @@ class ApiTest extends PHPUnit_Framework_TestCase
         */
 
         $api = new Api($options, $httpClient, $messageFactory);
-
 
         /*
         |------------------------------------------------------------
@@ -595,7 +592,7 @@ class ApiTest extends PHPUnit_Framework_TestCase
         ];
 
         $details = [
-            'response' => $returnValue
+            'response' => $returnValue,
         ];
 
         /*
@@ -606,7 +603,6 @@ class ApiTest extends PHPUnit_Framework_TestCase
 
         $api = new Api($options, $httpClient, $messageFactory);
 
-
         /*
         |------------------------------------------------------------
         | Assert
@@ -615,7 +611,7 @@ class ApiTest extends PHPUnit_Framework_TestCase
 
         $this->assertSame([
             'response' => $returnValue,
-            'status' => '-1'
+            'status' => '-1',
         ], $api->getTransactionData($details));
     }
 }
