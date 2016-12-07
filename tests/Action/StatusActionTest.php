@@ -230,78 +230,91 @@ class StatusActionTest extends PHPUnit_Framework_TestCase
         $request->shouldHaveReceived('markFailed')->once();
     }
 
-    public function test_apn_status()
-    {
-        $statusList = [
-            // B 授權完成
-            'B' => 'markCaptured',
-            // O 請款作業中(請款作業中，無法進行取消授權)
-            'O' => 'markSuspended',
-            // E 請款完成
-            'E' => 'markCaptured',
-            // F 授權失敗
-            'F' => 'markFailed',
-            // D 訂單逾期
-            'D' => 'markExpired',
-            // P 請款失敗
-            'P' => 'markCaptured',
-            // M 取消交易完成
-            'M' => 'markCanceled',
-            // N 取消交易失敗
-            'N' => 'markFailed',
-            // Q 取消授權完成
-            'Q' => 'markRefunded',
-            // R 取消授權失敗
-            'R' => 'markFailed',
-        ];
+    public function test_apn_status_is_b() {
+        $this->validateApnStatus('B', 'markCaptured');
+    }
 
-        foreach ($statusList as $status => $marked) {
+    public function test_apn_status_is_o() {
+        $this->validateApnStatus('O', 'markSuspended');
+    }
 
-            /*
-            |------------------------------------------------------------
-            | Arrange
-            |------------------------------------------------------------
-            */
+    public function test_apn_status_is_e() {
+        $this->validateApnStatus('E', 'markCaptured');
+    }
 
-            $request = m::spy('Payum\Core\Request\GetStatusInterface');
-            $details = new ArrayObject([
-                'api_id' => 'CC0000000001',
-                'trans_id' => '550e8400e29b41d4a716446655440000',
-                'order_no' => 'PO5488277',
-                'amount' => 1250,
-                'status' => $status,
-                'payment_code' => 1,
-                'payment_detail' => [
-                    'auth_code' => '123456',
-                    'auth_card_no' => '0000',
-                ],
-                'memo' => [],
-                'expire_time' => '2013-09-28T08:15:00+08:00',
-                'create_time' => '2013-09-28T08:00:00+08:00',
-                'modify_time' => '2013-09-28T08:30:00+08:00',
-                'nonce' => '1234569999',
-                'checksum' => '1d1e6c42757166243312b2ad05a5dda8',
-            ]);
+    public function test_apn_status_is_f() {
+        $this->validateApnStatus('F', 'markFailed');
+    }
 
-            /*
-            |------------------------------------------------------------
-            | Act
-            |------------------------------------------------------------
-            */
+    public function test_apn_status_is_d() {
+        $this->validateApnStatus('D', 'markExpired');
+    }
 
-            $request->shouldReceive('getModel')->andReturn($details);
+    public function test_apn_status_is_p() {
+        $this->validateApnStatus('P', 'markCaptured');
+    }
 
-            $action = new StatusAction();
-            $action->execute($request);
+    public function test_apn_status_is_m() {
+        $this->validateApnStatus('M', 'markCanceled');
+    }
 
-            /*
-            |------------------------------------------------------------
-            | Assert
-            |------------------------------------------------------------
-            */
+    public function test_apn_status_is_n() {
+        $this->validateApnStatus('N', 'markFailed');
+    }
 
-            $request->shouldHaveReceived('getModel')->twice();
-            $request->shouldHaveReceived($marked)->once();
-        }
+    public function test_apn_status_is_q() {
+        $this->validateApnStatus('Q', 'markRefunded');
+    }
+
+    public function test_apn_status_is_r() {
+        $this->validateApnStatus('R', 'markFailed');
+    }
+
+    public function validateApnStatus($status, $marked) {
+        /*
+        |------------------------------------------------------------
+        | Arrange
+        |------------------------------------------------------------
+        */
+
+        $request = m::spy('Payum\Core\Request\GetStatusInterface');
+        $details = new ArrayObject([
+            'api_id' => 'CC0000000001',
+            'trans_id' => '550e8400e29b41d4a716446655440000',
+            'order_no' => 'PO5488277',
+            'amount' => 1250,
+            'status' => $status,
+            'payment_code' => 1,
+            'payment_detail' => [
+                'auth_code' => '123456',
+                'auth_card_no' => '0000',
+            ],
+            'memo' => [],
+            'expire_time' => '2013-09-28T08:15:00+08:00',
+            'create_time' => '2013-09-28T08:00:00+08:00',
+            'modify_time' => '2013-09-28T08:30:00+08:00',
+            'nonce' => '1234569999',
+            'checksum' => '1d1e6c42757166243312b2ad05a5dda8',
+        ]);
+
+        /*
+        |------------------------------------------------------------
+        | Act
+        |------------------------------------------------------------
+        */
+
+        $request->shouldReceive('getModel')->andReturn($details);
+
+        $action = new StatusAction();
+        $action->execute($request);
+
+        /*
+        |------------------------------------------------------------
+        | Assert
+        |------------------------------------------------------------
+        */
+
+        $request->shouldHaveReceived('getModel')->twice();
+        $request->shouldHaveReceived($marked)->once();
     }
 }
