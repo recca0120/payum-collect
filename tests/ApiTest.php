@@ -516,9 +516,7 @@ class ApiTest extends PHPUnit_Framework_TestCase
             'checksum' => $checksum,
         ];
 
-        $details = [
-            'response' => $returnValue,
-        ];
+        $details = $returnValue;
 
         /*
         |------------------------------------------------------------
@@ -590,9 +588,7 @@ class ApiTest extends PHPUnit_Framework_TestCase
             'checksum' => $checksum,
         ];
 
-        $details = [
-            'response' => $returnValue,
-        ];
+        $details = $returnValue;
 
         /*
         |------------------------------------------------------------

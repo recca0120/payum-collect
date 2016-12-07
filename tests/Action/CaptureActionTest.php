@@ -22,6 +22,8 @@ class CaptureActionTest extends PHPUnit_Framework_TestCase
         $request = m::spy('Payum\Core\Request\Capture');
         $gateway = m::spy('Payum\Core\GatewayInterface');
         $token = m::spy('Payum\Core\Model\TokenInterface');
+        $genericTokenFactory = m::spy('Payum\Core\Security\GenericTokenFactoryInterface');
+        $notifyToken = m::spy('Payum\Core\Model\TokenInterface');
 
         $details = new ArrayObject([
             'cust_order_no' => 'foo.cust_order_no',
@@ -30,6 +32,8 @@ class CaptureActionTest extends PHPUnit_Framework_TestCase
         ]);
 
         $targetUrl = 'http://localhost/payment/capture/FEDHD1o-fvtpZqM6QvtNsy_qoLX_8x4QXvfyE94mIZc';
+
+        $gatewayName = 'foo.gateway';
 
         /*
         |------------------------------------------------------------
@@ -42,10 +46,16 @@ class CaptureActionTest extends PHPUnit_Framework_TestCase
             ->shouldReceive('getToken')->andReturn($token);
 
         $token
-            ->shouldReceive('getTargetUrl')->andReturn($targetUrl);
+            ->shouldReceive('getTargetUrl')->andReturn($targetUrl)
+            ->shouldReceive('getGatewayName')->andReturn($gatewayName)
+            ->shouldReceive('getDetails')->andReturn($details);
+
+        $genericTokenFactory
+            ->shouldReceive('createNotifyToken')->with($gatewayName, $details)->andReturn($notifyToken);
 
         $action = new CaptureAction();
         $action->setGateway($gateway);
+        $action->setGenericTokenFactory($genericTokenFactory);
         $action->execute($request);
 
         /*
@@ -60,6 +70,11 @@ class CaptureActionTest extends PHPUnit_Framework_TestCase
         $token->shouldHaveReceived('getTargetUrl')->once();
         $token->shouldHaveReceived('setTargetUrl')->with('http://localhost/payment/capture')->once();
         $token->shouldHaveReceived('save')->once();
+        $token->shouldHaveReceived('getGatewayName')->once();
+        $token->shouldHaveReceived('getDetails')->once();
+        $genericTokenFactory->shouldHaveReceived('createNotifyToken')->with($gatewayName, $details)->once();
+        $notifyToken->shouldHaveReceived('setHash')->with(md5($details['cust_order_no']))->once();
+        $notifyToken->shouldHaveReceived('save')->once();
         $gateway->shouldHaveReceived('execute')->with(m::type('PayumTW\Collect\Request\Api\CreateTransaction'))->once();
     }
 
@@ -73,6 +88,8 @@ class CaptureActionTest extends PHPUnit_Framework_TestCase
 
         $request = m::spy('Payum\Core\Request\Capture');
         $gateway = m::spy('Payum\Core\GatewayInterface');
+        $genericTokenFactory = m::spy('Payum\Core\Security\GenericTokenFactoryInterface');
+
         $details = new ArrayObject([
             'cust_order_no' => 'foo.cust_order_no',
             'order_amount' => 'foo.order_amount',
@@ -109,6 +126,7 @@ class CaptureActionTest extends PHPUnit_Framework_TestCase
 
         $action = new CaptureAction();
         $action->setGateway($gateway);
+        $action->setGenericTokenFactory($genericTokenFactory);
         $action->execute($request);
 
         /*

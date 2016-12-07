@@ -39,9 +39,6 @@ class CaptureAction implements ActionInterface, GatewayAwareInterface, GenericTo
             return;
         }
 
-
-        $notifyToken->setHash(md5($details['cust_order_no']));
-
         $token = $request->getToken();
         $targetUrl = $token->getTargetUrl();
         $targetUrl = substr($targetUrl, 0, strrpos($targetUrl, '/'));
@@ -52,6 +49,9 @@ class CaptureAction implements ActionInterface, GatewayAwareInterface, GenericTo
             $token->getGatewayName(),
             $token->getDetails()
         );
+
+        $notifyToken->setHash(md5($details['cust_order_no']));
+        $notifyToken->save();
 
         $this->gateway->execute(new CreateTransaction($details));
     }

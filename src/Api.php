@@ -225,6 +225,13 @@ class Api
             } else {
                 $details = array_merge($details, $params['response']);
             }
+        } else {
+            if ($this->verifyHash($params) === false) {
+                $details['status'] = '-1';
+
+                return $details;
+            }
+            $details = array_merge($details, $params);
         }
 
         return $details;
