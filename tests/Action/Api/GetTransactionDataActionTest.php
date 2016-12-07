@@ -98,4 +98,34 @@ class GetTransactionDataActionTest extends PHPUnit_Framework_TestCase
         $api->shouldHaveReceived('getTransactionData')->once();
         $details->shouldNotHaveReceived('replace');
     }
+
+    /**
+     * @expectedException Payum\Core\Exception\UnsupportedApiException
+     */
+    public function test_throw_exception_when_api_is_error()
+    {
+        /*
+        |------------------------------------------------------------
+        | Arrange
+        |------------------------------------------------------------
+        */
+
+        $request = m::spy('PayumTW\Collect\Request\Api\CancelTransaction, ArrayAccess');
+        $api = m::spy('stdClass');
+
+        /*
+        |------------------------------------------------------------
+        | Act
+        |------------------------------------------------------------
+        */
+
+        $action = new GetTransactionDataAction();
+        $action->setApi($api);
+
+        /*
+        |------------------------------------------------------------
+        | Assert
+        |------------------------------------------------------------
+        */
+    }
 }
