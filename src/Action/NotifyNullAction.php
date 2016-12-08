@@ -2,7 +2,6 @@
 
 namespace PayumTW\Collect\Action;
 
-use PayumTW\Collect\Api;
 use Payum\Core\Request\Notify;
 use Payum\Core\Request\GetToken;
 use Payum\Core\GatewayAwareTrait;
