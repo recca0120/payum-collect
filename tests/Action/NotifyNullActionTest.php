@@ -1,7 +1,6 @@
 <?php
 
 use Mockery as m;
-use Payum\Core\Bridge\Spl\ArrayObject;
 use PayumTW\Collect\Action\NotifyNullAction;
 
 class NotifyNullActionTest extends PHPUnit_Framework_TestCase
