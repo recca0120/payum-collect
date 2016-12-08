@@ -250,7 +250,7 @@ class Api
 
         if (isset($params['status']) === true) {
             $hashKey = 'checksum';
-            $data = $data = $this->only($params, [
+            $data = $this->only($params, [
                 'api_id',
                 'trans_id',
                 'amount',

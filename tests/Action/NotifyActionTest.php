@@ -23,7 +23,7 @@ class NotifyActionTest extends PHPUnit_Framework_TestCase
 
         $request = m::spy('Payum\Core\Request\Notify');
         $gateway = m::spy('Payum\Core\GatewayInterface');
-
+        $api = m::spy('PayumTW\Collect\Api');
 
         $apiId = 'CC0000000001';
         $transId = '550e8400e29b41d4a716446655440000';
@@ -70,8 +70,19 @@ class NotifyActionTest extends PHPUnit_Framework_TestCase
         $request
             ->shouldReceive('getModel')->andReturn($details);
 
+        $gateway
+            ->shouldReceive('execute')->with(m::type('Payum\Core\Request\GetHttpRequest'))->andReturnUsing(function($getHttpRequest) use ($returnValue) {
+                $getHttpRequest->request = $returnValue;
+
+                return $getHttpRequest;
+            });
+
+        $api
+            ->shouldReceive('verifyHash')->with($returnValue)->andReturn(true);
+
         $action = new NotifyAction();
         $action->setGateway($gateway);
+        $action->setApi($api);
 
         /*
         |------------------------------------------------------------
@@ -87,6 +98,8 @@ class NotifyActionTest extends PHPUnit_Framework_TestCase
         }
 
         $request->shouldHaveReceived('getModel')->twice();
+        $gateway->shouldHaveReceived('execute')->with(m::type('Payum\Core\Request\GetHttpRequest'))->once();
+        $api->shouldHaveReceived('verifyHash')->with($returnValue)->once();
         $gateway->shouldHaveReceived('execute')->with(m::type('Payum\Core\Request\Sync'))->once();
     }
 
@@ -100,7 +113,7 @@ class NotifyActionTest extends PHPUnit_Framework_TestCase
 
         $request = m::spy('Payum\Core\Request\Notify');
         $gateway = m::spy('Payum\Core\GatewayInterface');
-
+        $api = m::spy('PayumTW\Collect\Api');
 
         $apiId = 'CC0000000001';
         $transId = '550e8400e29b41d4a716446655440000';
@@ -147,8 +160,19 @@ class NotifyActionTest extends PHPUnit_Framework_TestCase
         $request
             ->shouldReceive('getModel')->andReturn($details);
 
+        $gateway
+            ->shouldReceive('execute')->with(m::type('Payum\Core\Request\GetHttpRequest'))->andReturnUsing(function($getHttpRequest) use ($returnValue) {
+                $getHttpRequest->request = $returnValue;
+
+                return $getHttpRequest;
+            });
+
+        $api
+            ->shouldReceive('verifyHash')->with($returnValue)->andReturn(false);
+
         $action = new NotifyAction();
         $action->setGateway($gateway);
+        $action->setApi($api);
 
         /*
         |------------------------------------------------------------
@@ -159,11 +183,12 @@ class NotifyActionTest extends PHPUnit_Framework_TestCase
         try {
             $action->execute($request);
         } catch (ReplyInterface $e) {
-            $this->assertSame(200, $e->getStatusCode());
-            $this->assertSame('OK', $e->getContent());
+            $this->assertSame(400, $e->getStatusCode());
+            $this->assertSame('FAIL', $e->getContent());
         }
 
         $request->shouldHaveReceived('getModel')->twice();
-        $gateway->shouldHaveReceived('execute')->with(m::type('Payum\Core\Request\Sync'))->once();
+        $gateway->shouldHaveReceived('execute')->with(m::type('Payum\Core\Request\GetHttpRequest'))->once();
+        $api->shouldHaveReceived('verifyHash')->with($returnValue)->once();
     }
 }
