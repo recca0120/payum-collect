@@ -225,6 +225,13 @@ class Api
             } else {
                 $details = array_merge($details, $params['response']);
             }
+        } else {
+            if ($this->verifyHash($params) === false) {
+                $details['status'] = '-1';
+
+                return $details;
+            }
+            $details = array_merge($details, $params);
         }
 
         return $details;
@@ -243,7 +250,7 @@ class Api
 
         if (isset($params['status']) === true) {
             $hashKey = 'checksum';
-            $data = $data = $this->only($params, [
+            $data = $this->only($params, [
                 'api_id',
                 'trans_id',
                 'amount',

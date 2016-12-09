@@ -56,4 +56,34 @@ class RefundTransactionActionTest extends PHPUnit_Framework_TestCase
         $request->shouldHaveReceived('getModel')->twice();
         $api->shouldHaveReceived('refundTransaction')->with($input)->once();
     }
+
+    /**
+     * @expectedException Payum\Core\Exception\UnsupportedApiException
+     */
+    public function test_throw_exception_when_api_is_error()
+    {
+        /*
+        |------------------------------------------------------------
+        | Arrange
+        |------------------------------------------------------------
+        */
+
+        $request = m::spy('PayumTW\Collect\Request\Api\CancelTransaction, ArrayAccess');
+        $api = m::spy('stdClass');
+
+        /*
+        |------------------------------------------------------------
+        | Act
+        |------------------------------------------------------------
+        */
+
+        $action = new RefundTransactionAction();
+        $action->setApi($api);
+
+        /*
+        |------------------------------------------------------------
+        | Assert
+        |------------------------------------------------------------
+        */
+    }
 }

@@ -11,10 +11,13 @@ use Payum\Core\Bridge\Spl\ArrayObject;
 use Payum\Core\Request\GetHttpRequest;
 use PayumTW\Collect\Request\Api\CreateTransaction;
 use Payum\Core\Exception\RequestNotSupportedException;
+use Payum\Core\Security\GenericTokenFactoryAwareTrait;
+use Payum\Core\Security\GenericTokenFactoryAwareInterface;
 
-class CaptureAction implements ActionInterface, GatewayAwareInterface
+class CaptureAction implements ActionInterface, GatewayAwareInterface, GenericTokenFactoryAwareInterface
 {
     use GatewayAwareTrait;
+    use GenericTokenFactoryAwareTrait;
 
     /**
      * {@inheritdoc}
@@ -35,6 +38,20 @@ class CaptureAction implements ActionInterface, GatewayAwareInterface
 
             return;
         }
+
+        $token = $request->getToken();
+        $targetUrl = $token->getTargetUrl();
+        $targetUrl = substr($targetUrl, 0, strrpos($targetUrl, '/'));
+        $token->setTargetUrl($targetUrl);
+        $token->save();
+
+        $notifyToken = $this->tokenFactory->createNotifyToken(
+            $token->getGatewayName(),
+            $token->getDetails()
+        );
+
+        $notifyToken->setHash(md5($details['cust_order_no']));
+        $notifyToken->save();
 
         $this->gateway->execute(new CreateTransaction($details));
     }
