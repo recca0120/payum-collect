@@ -23,9 +23,9 @@ class ConvertPaymentActionTest extends PHPUnit_Framework_TestCase
         $source = m::spy('Payum\Core\Model\PaymentInterface');
         $details = new ArrayObject();
 
-        $custOrderNo = uniqid();
-        $orderAmount = 1000;
-        $orderDetail = 'foo.description';
+        $number = uniqid();
+        $totalAmount = 1000;
+        $description = 'foo.description';
 
         /*
         |------------------------------------------------------------
@@ -39,9 +39,9 @@ class ConvertPaymentActionTest extends PHPUnit_Framework_TestCase
 
         $source
             ->shouldReceive('getDetails')->andReturn($details)
-            ->shouldReceive('getNumber')->andReturn($custOrderNo)
-            ->shouldReceive('getTotalAmount')->andReturn($orderAmount)
-            ->shouldReceive('getDescription')->andReturn($orderDetail);
+            ->shouldReceive('getNumber')->andReturn($number)
+            ->shouldReceive('getTotalAmount')->andReturn($totalAmount)
+            ->shouldReceive('getDescription')->andReturn($description);
 
         $action = new ConvertPaymentAction();
         $action->execute($request);
@@ -59,9 +59,9 @@ class ConvertPaymentActionTest extends PHPUnit_Framework_TestCase
         $source->shouldHaveReceived('getTotalAmount')->once();
         $source->shouldHaveReceived('getDescription')->once();
         $request->shouldHaveReceived('setResult')->with([
-            'cust_order_no' => $custOrderNo,
-            'order_amount' => $orderAmount,
-            'order_detail' => $orderDetail,
+            'cust_order_no' => $number,
+            'order_amount' => $totalAmount,
+            'order_detail' => $description,
         ])->once();
     }
 }
