@@ -33,7 +33,11 @@ class CaptureAction implements ActionInterface, GatewayAwareInterface, GenericTo
         $httpRequest = new GetHttpRequest();
         $this->gateway->execute($httpRequest);
 
-        if (isset($httpRequest->request['ret']) === true) {
+        if (
+            isset($httpRequest->request['ret']) === true ||
+            // CVS
+            isset($httpRequest->request['status']) === true
+        ) {
             $this->gateway->execute(new Sync($details));
 
             return;

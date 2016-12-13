@@ -26,6 +26,7 @@ class ConvertPaymentActionTest extends PHPUnit_Framework_TestCase
         $number = uniqid();
         $totalAmount = 1000;
         $description = 'foo.description';
+        $clientEmail = 'foo.email';
 
         /*
         |------------------------------------------------------------
@@ -41,7 +42,8 @@ class ConvertPaymentActionTest extends PHPUnit_Framework_TestCase
             ->shouldReceive('getDetails')->andReturn($details)
             ->shouldReceive('getNumber')->andReturn($number)
             ->shouldReceive('getTotalAmount')->andReturn($totalAmount)
-            ->shouldReceive('getDescription')->andReturn($description);
+            ->shouldReceive('getDescription')->andReturn($description)
+            ->shouldReceive('getClientEmail')->andReturn($clientEmail);
 
         $action = new ConvertPaymentAction();
         $action->execute($request);
@@ -58,10 +60,12 @@ class ConvertPaymentActionTest extends PHPUnit_Framework_TestCase
         $source->shouldHaveReceived('getNumber')->once();
         $source->shouldHaveReceived('getTotalAmount')->once();
         $source->shouldHaveReceived('getDescription')->once();
+        $source->shouldHaveReceived('getClientEmail')->once();
         $request->shouldHaveReceived('setResult')->with([
             'cust_order_no' => $number,
             'order_amount' => $totalAmount,
             'order_detail' => $description,
+            'payer_email' => $clientEmail,
         ])->once();
     }
 }

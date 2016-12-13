@@ -4,7 +4,7 @@ namespace PayumTW\Collect;
 
 use Carbon\Carbon;
 
-class CollectApi extends Api
+class CollectApi extends CollectUnionpayApi
 {
     /**
      * @return string
