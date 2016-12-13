@@ -5,19 +5,15 @@ namespace PayumTW\Collect;
 use Payum\Core\GatewayFactory;
 use Payum\Core\Bridge\Spl\ArrayObject;
 use PayumTW\Collect\Action\SyncAction;
-use PayumTW\Collect\Action\CancelAction;
 use PayumTW\Collect\Action\NotifyAction;
-use PayumTW\Collect\Action\RefundAction;
 use PayumTW\Collect\Action\StatusAction;
 use PayumTW\Collect\Action\CaptureAction;
 use PayumTW\Collect\Action\NotifyNullAction;
 use PayumTW\Collect\Action\ConvertPaymentAction;
-use PayumTW\Collect\Action\Api\CancelTransactionAction;
 use PayumTW\Collect\Action\Api\CreateTransactionAction;
-use PayumTW\Collect\Action\Api\RefundTransactionAction;
 use PayumTW\Collect\Action\Api\GetTransactionDataAction;
 
-class CollectCsvGatewayFactory extends GatewayFactory
+class CollectCvsGatewayFactory extends GatewayFactory
 {
     /**
      * {@inheritdoc}

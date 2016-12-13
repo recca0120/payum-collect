@@ -2,7 +2,6 @@
 
 namespace PayumTW\Collect;
 
-use Carbon\Carbon;
 use Http\Message\MessageFactory;
 use Payum\Core\HttpClientInterface;
 use Payum\Core\Exception\Http\HttpException;
@@ -50,13 +49,17 @@ abstract class Api
      *
      * @return array
      */
-    protected function doRequest($method, array $fields, $type = 'cancel')
+    protected function doRequest($method, $body, $type = 'cancel', $isJson = true)
     {
         $headers = [
             'Content-Type' => 'application/x-www-form-urlencoded',
         ];
 
-        $request = $this->messageFactory->createRequest($method, $this->getApiEndpoint($type), $headers, http_build_query($fields));
+        if (is_array($body) === true) {
+            $body = http_build_query($body);
+        }
+
+        $request = $this->messageFactory->createRequest($method, $this->getApiEndpoint($type), $headers, $body);
 
         $response = $this->client->send($request);
 
@@ -64,7 +67,9 @@ abstract class Api
             throw HttpException::factory($request, $response);
         }
 
-        return json_decode($response->getBody()->getContents(), true);
+        $contents = $response->getBody()->getContents();
+
+        return $isJson === true ? json_decode($contents, true) : $content;
     }
 
     /**
