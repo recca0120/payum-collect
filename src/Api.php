@@ -69,7 +69,7 @@ abstract class Api
 
         $contents = $response->getBody()->getContents();
 
-        return $isJson === true ? json_decode($contents, true) : $content;
+        return $isJson === true ? json_decode($contents, true) : $contents;
     }
 
     /**

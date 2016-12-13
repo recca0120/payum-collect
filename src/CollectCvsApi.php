@@ -23,10 +23,8 @@ class CollectCvsApi extends Api
      */
     public function createTransaction(array $params, $type = 'redirect')
     {
+        $cmd = 'cvs_order_regiater';
         $supportedParams = [
-            'cmd' => 'cvs_order_regiater',
-            'cust_id' => $this->options['cust_id'],
-            'cust_password' => $this->options['cust_password'],
             'cust_order_number' => null,
             'order_amount' => null,
             'expire_date' => Carbon::now(static::TIMEZONE)->addDays(7)->toDateTimeString(),
@@ -43,9 +41,13 @@ class CollectCvsApi extends Api
         ));
 
         return $type === 'redirect' ?
-            $params :
+            array_merge([
+                'cmd' => $cmd,
+                'cust_id' => $this->options['cust_id'],
+                'cust_password' => $this->options['cust_password'],
+            ], $params) :
             $this->parseResponseXML(
-                $this->doRequest('POST', $this->createRequestXML('cvs_order_regiater', $params), 'sync', false)
+                $this->doRequest('POST', $this->createRequestXML($params, $cmd), 'sync', false)
             );
     }
 
@@ -58,8 +60,10 @@ class CollectCvsApi extends Api
      */
     public function getTransactionData(array $params)
     {
-        if (isset($params['response']) === true && isset($params['response']['cust_id']) === true) {
+        if (isset($params['response']) === true && isset($params['response']['ibon_shopid']) === true) {
             return $params['response'];
+        } elseif (isset($params['ibon_shopid']) === true) {
+            return $params;
         }
 
         return parent::getTransactionData($params);
@@ -72,7 +76,7 @@ class CollectCvsApi extends Api
      *
      * @return string
      */
-    public function getOrderQueryTransactionData(array $params)
+    public function createOrderQueryTransaction(array $params)
     {
         $supportedParams = [
             'process_code_update_time_begin' => Carbon::now(static::TIMEZONE)->toDateTimeString(),
@@ -88,7 +92,7 @@ class CollectCvsApi extends Api
         $params['process_code_update_time_end'] = $this->toIso8601String($params['process_code_update_time_end']);
 
         return $this->parseResponseXML(
-            $this->doRequest('POST', $this->createRequestXML('cvs_order_query', $params), 'sync', false)
+            $this->doRequest('POST', $this->createRequestXML($params, 'cvs_order_query'), 'sync', false)
         );
     }
 
