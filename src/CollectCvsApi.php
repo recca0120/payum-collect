@@ -115,7 +115,7 @@ class CollectCvsApi extends Api
      *
      * @return string
      */
-    public function createRequestXML($params, $cmd = 'cvs_order_regiater')
+    protected function createRequestXML($params, $cmd = 'cvs_order_regiater')
     {
         $key = $cmd === 'cvs_order_regiater' ? 'order' : 'query';
         $params = [
@@ -154,7 +154,7 @@ class CollectCvsApi extends Api
      *
      * @return array
      */
-    public function parseResponseXML($xml)
+    protected function parseResponseXML($xml)
     {
         $result = [
             'status' => 'ERROR',

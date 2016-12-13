@@ -260,7 +260,8 @@ class CollectCvsApiTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $api = new CollectCvsApi($options, $httpClient, $messageFactory);
+        $api = m::spy(new CollectCvsApi($options, $httpClient, $messageFactory))
+            ->shouldAllowMockingProtectedMethods();
 
         /*
         |------------------------------------------------------------
@@ -372,7 +373,8 @@ class CollectCvsApiTest extends PHPUnit_Framework_TestCase
             ->shouldReceive('getBody')->andReturnSelf()
             ->shouldReceive('getContents')->andReturn($responseXML);
 
-        $api = new CollectCvsApi($options, $httpClient, $messageFactory);
+        $api = m::spy(new CollectCvsApi($options, $httpClient, $messageFactory))
+            ->shouldAllowMockingProtectedMethods();
 
         /*
         |------------------------------------------------------------
@@ -477,7 +479,8 @@ class CollectCvsApiTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $api = new CollectCvsApi($options, $httpClient, $messageFactory);
+        $api = m::spy(new CollectCvsApi($options, $httpClient, $messageFactory))
+            ->shouldAllowMockingProtectedMethods();
 
         /*
         |------------------------------------------------------------
@@ -631,7 +634,8 @@ class CollectCvsApiTest extends PHPUnit_Framework_TestCase
             ->shouldReceive('getBody')->andReturnSelf()
             ->shouldReceive('getContents')->andReturn($responseXML);
 
-        $api = new CollectCvsApi($options, $httpClient, $messageFactory);
+        $api = m::spy(new CollectCvsApi($options, $httpClient, $messageFactory))
+            ->shouldAllowMockingProtectedMethods();
 
         /*
         |------------------------------------------------------------
