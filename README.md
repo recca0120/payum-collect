@@ -1,6 +1,6 @@
 # Collect
 
-[![StyleCI](https://styleci.io/repos/75824304/shield?style=flat)](https://styleci.io/repos/67906669)
+[![StyleCI](https://styleci.io/repos/75824304/shield?style=flat)](https://styleci.io/repos/75824304)
 [![Build Status](https://travis-ci.org/recca0120/payum-collect.svg)](https://travis-ci.org/recca0120/payum-collect)
 [![Total Downloads](https://poser.pugx.org/payum-tw/collect/d/total.svg)](https://packagist.org/packages/payum-tw/collect)
 [![Latest Stable Version](https://poser.pugx.org/payum-tw/collect/v/stable.svg)](https://packagist.org/packages/payum-tw/collect)
