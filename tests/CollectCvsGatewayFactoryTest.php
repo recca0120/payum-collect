@@ -2,9 +2,9 @@
 
 use Mockery as m;
 use Payum\Core\Bridge\Spl\ArrayObject;
-use PayumTW\Collect\CollectGatewayFactory;
+use PayumTW\Collect\CollectCvsGatewayFactory;
 
-class CollectGatewayFactoryTest extends PHPUnit_Framework_TestCase
+class CollectCvsGatewayFactoryTest extends PHPUnit_Framework_TestCase
 {
     public function tearDown()
     {
@@ -19,21 +19,22 @@ class CollectGatewayFactoryTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $linkId = 'foo.link_id';
-        $hashBase = 'foo.hash_base';
+        $custId = 'foo.cust_id';
+        $custPassword = 'foo.cust_password';
         $httpClient = m::spy('Payum\Core\HttpClientInterface');
         $messageFactory = m::spy('Http\Message\MessageFactory');
+
         /*
         |------------------------------------------------------------
         | Act
         |------------------------------------------------------------
         */
 
-        $gateway = new CollectGatewayFactory();
+        $gateway = new CollectCvsGatewayFactory();
         $config = $gateway->createConfig([
             'api' => false,
-            'link_id' => $linkId,
-            'hash_base' => $hashBase,
+            'cust_id' => $custId,
+            'cust_password' => $custPassword,
             'payum.http_client' => $httpClient,
             'httplug.message_factory' => $messageFactory,
         ]);
@@ -45,8 +46,8 @@ class CollectGatewayFactoryTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $this->assertSame($linkId, $config['link_id']);
-        $this->assertSame($hashBase, $config['hash_base']);
-        $this->assertInstanceOf('PayumTW\Collect\CollectApi', $api);
+        $this->assertSame($custId, $config['cust_id']);
+        $this->assertSame($custPassword, $config['cust_password']);
+        $this->assertInstanceOf('PayumTW\Collect\CollectCvsApi', $api);
     }
 }

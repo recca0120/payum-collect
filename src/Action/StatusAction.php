@@ -73,6 +73,10 @@ class StatusAction implements ActionInterface
             'Q' => 'markRefunded',
             // R 取消授權失敗
             'R' => 'markFailed',
+
+            // CVS
+            'OK' => 'markCaptured',
+            'ERROR' => 'markFailed',
         ];
 
         if (isset($apnStatus[$details['status']]) === true) {

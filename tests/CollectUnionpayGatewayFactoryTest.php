@@ -2,9 +2,9 @@
 
 use Mockery as m;
 use Payum\Core\Bridge\Spl\ArrayObject;
-use PayumTW\Collect\CollectGatewayFactory;
+use PayumTW\Collect\CollectUnionpayGatewayFactory;
 
-class CollectGatewayFactoryTest extends PHPUnit_Framework_TestCase
+class CollectUnionpayGatewayFactoryTest extends PHPUnit_Framework_TestCase
 {
     public function tearDown()
     {
@@ -29,7 +29,7 @@ class CollectGatewayFactoryTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $gateway = new CollectGatewayFactory();
+        $gateway = new CollectUnionpayGatewayFactory();
         $config = $gateway->createConfig([
             'api' => false,
             'link_id' => $linkId,
@@ -47,6 +47,6 @@ class CollectGatewayFactoryTest extends PHPUnit_Framework_TestCase
 
         $this->assertSame($linkId, $config['link_id']);
         $this->assertSame($hashBase, $config['hash_base']);
-        $this->assertInstanceOf('PayumTW\Collect\CollectApi', $api);
+        $this->assertInstanceOf('PayumTW\Collect\CollectUnionpayApi', $api);
     }
 }
