@@ -27,7 +27,7 @@ class CollectCvsApi extends Api
         $supportedParams = [
             'cust_order_number' => null,
             'order_amount' => null,
-            'expire_date' => Carbon::now(static::TIMEZONE)->addDays(7)->toDateTimeString(),
+            'expire_date' => Carbon::now(static::TIMEZONE)->endOfDay()->addDays(7)->toDateTimeString(),
             'payer_name' => null,
             'payer_postcode' => null,
             'payer_address' => null,
@@ -39,6 +39,10 @@ class CollectCvsApi extends Api
             $supportedParams,
             array_intersect_key($params, $supportedParams)
         ));
+
+        if (empty($params['expire_date']) === false) {
+            $params['expire_date'] = $this->toIso8601String($params['expire_date']);
+        }
 
         return $type === 'redirect' ?
             array_merge([
@@ -60,13 +64,18 @@ class CollectCvsApi extends Api
      */
     public function getTransactionData(array $params)
     {
-        if (isset($params['response']) === true && isset($params['response']['ibon_shopid']) === true) {
-            return $params['response'];
-        } elseif (isset($params['ibon_shopid']) === true) {
-            return $params;
+        if (
+            isset($params['api_id']) === true ||
+            isset($params['response']) === true && isset($params['response']['api_id'])
+        ) {
+            return parent::getTransactionData($params);
         }
 
-        return parent::getTransactionData($params);
+        if (isset($params['response']) === true) {
+            return $params['response'];
+        }
+
+        return $params;
     }
 
     /**

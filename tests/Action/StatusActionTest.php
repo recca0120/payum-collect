@@ -18,25 +18,26 @@ class StatusActionTest extends PHPUnit_Framework_TestCase
 
     public function test_mark_captured_when_ret_is_ok()
     {
-        $this->validate(['ret' => 'OK'], 'markCaptured');
+        $this->validate(['link_id' => 'link_id', 'ret' => 'OK'], 'markCaptured');
     }
 
     public function test_mark_failed_when_ret_is_fail()
     {
-        $this->validate(['ret' => 'FAIL'], 'markFailed');
+        $this->validate(['link_id' => 'link_id', 'ret' => 'FAIL'], 'markFailed');
     }
 
     public function test_mark_canceled_when_status_is_ok()
     {
         $this->validate([
+            'link_id' => 'link_id',
             'status' => 'OK',
-            'cust_order_no' => '20120403001276',
         ], 'markCanceled');
     }
 
     public function test_mark_refunded_when_status_is_ok()
     {
         $this->validate([
+            'link_id' => 'link_id',
             'status' => 'OK',
             'cust_order_no' => '20120403001276',
             'refund_amount' => 12000,

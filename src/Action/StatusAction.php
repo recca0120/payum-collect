@@ -20,39 +20,35 @@ class StatusAction implements ActionInterface
 
         $details = ArrayObject::ensureArrayObject($request->getModel());
 
-        if ($details['ret'] === 'OK') {
-            $request->markCaptured();
-
-            return;
-        }
-
-        if ($details['ret'] === 'FAIL') {
-            $request->markFailed();
-
-            return;
-        }
-
-        if ($details['status'] === 'OK') {
-            if (isset($details['refund_amount']) === true) {
-                $request->markRefunded();
+        if (isset($details['link_id']) === true) {
+            if ($details['ret'] === 'OK') {
+                $request->markCaptured();
 
                 return;
             }
 
-            if (isset($details['cust_order_no']) === true) {
-                $request->markCanceled();
+            if ($details['ret'] === 'FAIL') {
+                $request->markFailed();
 
                 return;
             }
+
+            if ($details['status'] === 'OK') {
+                if (isset($details['refund_amount']) === true) {
+                    $request->markRefunded();
+
+                    return;
+                }
+
+                if (isset($details['order_detail']) === false) {
+                    $request->markCanceled();
+
+                    return;
+                }
+            }
         }
 
-        if ($details['status'] === 'ERROR') {
-            $request->markFailed();
-
-            return;
-        }
-
-        $apnStatus = [
+        $statusMap = [
             // B 授權完成
             'B' => 'markCaptured',
             // O 請款作業中(請款作業中，無法進行取消授權)
@@ -79,8 +75,8 @@ class StatusAction implements ActionInterface
             'ERROR' => 'markFailed',
         ];
 
-        if (isset($apnStatus[$details['status']]) === true) {
-            call_user_func([$request, $apnStatus[$details['status']]]);
+        if (isset($statusMap[$details['status']]) === true) {
+            call_user_func([$request, $statusMap[$details['status']]]);
 
             return;
         }

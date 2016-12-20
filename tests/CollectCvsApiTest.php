@@ -28,7 +28,7 @@ class CollectCvsApiTest extends PHPUnit_Framework_TestCase
         $custPassword = 'foo.cust_password';
         $custOrderNumber = 'foo.cust_order_number';
         $orderAmount = 12345;
-        $expireDate = Carbon::now(static::TIMEZONE)->addDays(7)->toDateTimeString();
+        $expireDate = Carbon::now(static::TIMEZONE)->endOfDay()->addDays(7)->toIso8601String();
         $payerName = 'payer_name';
         $payerPostcode = 'payer_postcode';
         $payerAddress = 'payer_address';
@@ -312,7 +312,7 @@ class CollectCvsApiTest extends PHPUnit_Framework_TestCase
         $custPassword = 'foo.cust_password';
         $custOrderNumber = 'foo.cust_order_number';
         $orderAmount = '12345';
-        $expireDate = Carbon::now(static::TIMEZONE)->addDays(7)->toDateTimeString();
+        $expireDate = Carbon::now(static::TIMEZONE)->endOfDay()->addDays(7)->toIso8601String();
         $payerName = 'payer_name';
         $payerPostcode = 'payer_postcode';
         $payerAddress = 'payer_address';
