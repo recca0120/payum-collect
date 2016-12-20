@@ -57,7 +57,7 @@ class CancelTransactionActionTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Payum\Core\Exception\UnsupportedApiException
+     * @expectedException \Payum\Core\Exception\UnsupportedApiException
      */
     public function test_throw_exception_when_api_is_error()
     {

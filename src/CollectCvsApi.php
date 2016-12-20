@@ -81,7 +81,7 @@ class CollectCvsApi extends Api
     /**
      * createOrderQueryTransaction.
      *
-     * @param  array  $params
+     * @param array $params
      *
      * @return string
      */
@@ -108,7 +108,7 @@ class CollectCvsApi extends Api
     /**
      * toIso8601String.
      *
-     * @param  string $string
+     * @param string $string
      *
      * @return string
      */
@@ -120,7 +120,7 @@ class CollectCvsApi extends Api
     /**
      * createQueryRequestXML.
      *
-     * @param  array $params
+     * @param array $params
      *
      * @return string
      */
@@ -159,7 +159,7 @@ class CollectCvsApi extends Api
     /**
      * parseResponseXML.
      *
-     * @param  string $xml
+     * @param string $xml
      *
      * @return array
      */
