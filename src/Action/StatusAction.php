@@ -20,19 +20,19 @@ class StatusAction implements ActionInterface
 
         $details = ArrayObject::ensureArrayObject($request->getModel());
 
+        if ($details['ret'] === 'OK') {
+            $request->markCaptured();
+
+            return;
+        }
+
+        if ($details['ret'] === 'FAIL') {
+            $request->markFailed();
+
+            return;
+        }
+
         if (isset($details['link_id']) === true) {
-            if ($details['ret'] === 'OK') {
-                $request->markCaptured();
-
-                return;
-            }
-
-            if ($details['ret'] === 'FAIL') {
-                $request->markFailed();
-
-                return;
-            }
-
             if ($details['status'] === 'OK') {
                 if (isset($details['refund_amount']) === true) {
                     $request->markRefunded();
@@ -60,7 +60,7 @@ class StatusAction implements ActionInterface
             // D 訂單逾期
             'D' => 'markExpired',
             // P 請款失敗
-            'P' => 'markCaptured',
+            'P' => 'markFailed',
             // M 取消交易完成
             'M' => 'markCanceled',
             // N 取消交易失敗
