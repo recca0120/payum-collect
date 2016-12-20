@@ -29,6 +29,7 @@ class ConvertPaymentAction implements ActionInterface
         $details['order_detail'] = $payment->getDescription();
 
         // CVS
+        $details['cust_order_number'] = $details['cust_order_no'];
         $details['payer_email'] = $payment->getClientEmail();
 
         $request->setResult((array) $details);

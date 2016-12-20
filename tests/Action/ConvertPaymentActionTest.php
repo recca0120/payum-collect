@@ -65,6 +65,7 @@ class ConvertPaymentActionTest extends PHPUnit_Framework_TestCase
             'cust_order_no' => $number,
             'order_amount' => $totalAmount,
             'order_detail' => $description,
+            'cust_order_number' => $number,
             'payer_email' => $clientEmail,
         ])->once();
     }
