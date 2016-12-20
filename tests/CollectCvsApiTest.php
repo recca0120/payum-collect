@@ -69,7 +69,7 @@ class CollectCvsApiTest extends PHPUnit_Framework_TestCase
             'cmd' => 'cvs_order_regiater',
             'cust_id' => $custId,
             'cust_password' => $custPassword,
-        ], $order), $api->createTransaction($order));
+        ], $order), $api->createTransaction($order, 'redirect'));
 
         $this->assertSame('https://www.ccat.com.tw/cvs/ap_interface.php', $api->getApiEndpoint());
     }

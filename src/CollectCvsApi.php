@@ -21,7 +21,7 @@ class CollectCvsApi extends Api
      *
      * @return array
      */
-    public function createTransaction(array $params, $type = 'redirect')
+    public function createTransaction(array $params, $type = 'xml')
     {
         $cmd = 'cvs_order_regiater';
         $supportedParams = [
