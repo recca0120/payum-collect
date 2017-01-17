@@ -329,7 +329,7 @@ class StatusActionTest extends PHPUnit_Framework_TestCase
         ], 'markFailed');
     }
 
-    public function test_mark_captured_when_api_is_ibon_create_and_success()
+    public function test_mark_pending_when_api_is_ibon_create_and_success()
     {
         $this->validate([
             'cmd' => 'cvs_order_regiater',
@@ -357,7 +357,7 @@ class StatusActionTest extends PHPUnit_Framework_TestCase
             'ibon_shopid' => 'CCAT',
 
             'status' => 'OK',
-        ], 'markCaptured');
+        ], 'markPending');
     }
 
     public function test_mark_failed_when_api_is_ibon_create_and_fail()

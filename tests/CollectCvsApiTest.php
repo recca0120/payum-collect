@@ -38,6 +38,7 @@ class CollectCvsApiTest extends PHPUnit_Framework_TestCase
         $options = [
             'cust_id' => $custId,
             'cust_password' => $custPassword,
+            'submit_type' => 'redirect',
         ];
 
         $order = [
@@ -69,7 +70,7 @@ class CollectCvsApiTest extends PHPUnit_Framework_TestCase
             'cmd' => 'cvs_order_regiater',
             'cust_id' => $custId,
             'cust_password' => $custPassword,
-        ], $order), $api->createTransaction($order, 'redirect'));
+        ], $order), $api->createTransaction($order));
 
         $this->assertSame('https://www.ccat.com.tw/cvs/ap_interface.php', $api->getApiEndpoint());
     }
@@ -322,6 +323,7 @@ class CollectCvsApiTest extends PHPUnit_Framework_TestCase
         $options = [
             'cust_id' => $custId,
             'cust_password' => $custPassword,
+            'submit_type' => 'xml',
         ];
 
         $order = [
@@ -402,7 +404,7 @@ class CollectCvsApiTest extends PHPUnit_Framework_TestCase
                     'ibon_shopid' => 'CCAT',
                 ],
             ],
-        ], $api->createTransaction($order, 'xml'));
+        ], $api->createTransaction($order));
 
         $messageFactory->shouldHaveReceived('createRequest')->with('POST', $api->getApiEndpoint('sync'), $headers, m::on(function ($body) use ($api, $options, $order) {
             return $body === $api->createRequestXML($order, 'cvs_order_regiater');

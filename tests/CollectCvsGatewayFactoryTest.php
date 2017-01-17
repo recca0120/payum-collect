@@ -23,6 +23,7 @@ class CollectCvsGatewayFactoryTest extends PHPUnit_Framework_TestCase
         $custPassword = 'foo.cust_password';
         $httpClient = m::spy('Payum\Core\HttpClientInterface');
         $messageFactory = m::spy('Http\Message\MessageFactory');
+        $submitType = 'redirect';
 
         /*
         |------------------------------------------------------------
@@ -35,6 +36,7 @@ class CollectCvsGatewayFactoryTest extends PHPUnit_Framework_TestCase
             'api' => false,
             'cust_id' => $custId,
             'cust_password' => $custPassword,
+            'submit_type' => $submitType,
             'payum.http_client' => $httpClient,
             'httplug.message_factory' => $messageFactory,
         ]);
@@ -48,6 +50,7 @@ class CollectCvsGatewayFactoryTest extends PHPUnit_Framework_TestCase
 
         $this->assertSame($custId, $config['cust_id']);
         $this->assertSame($custPassword, $config['cust_password']);
+        $this->assertSame($submitType, $config['submit_type']);
         $this->assertInstanceOf('PayumTW\Collect\CollectCvsApi', $api);
     }
 }

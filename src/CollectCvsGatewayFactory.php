@@ -39,6 +39,7 @@ class CollectCvsGatewayFactory extends GatewayFactory
             $config['payum.default_options'] = [
                 'cust_id' => null,
                 'cust_password' => null,
+                'submit_type' => 'xml',
                 'sandbox' => false,
             ];
 

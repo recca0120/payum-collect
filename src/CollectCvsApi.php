@@ -21,7 +21,7 @@ class CollectCvsApi extends Api
      *
      * @return array
      */
-    public function createTransaction(array $params, $type = 'xml')
+    public function createTransaction(array $params, $returnType = 'xml')
     {
         $cmd = 'cvs_order_regiater';
         $supportedParams = [
@@ -44,7 +44,7 @@ class CollectCvsApi extends Api
             $params['expire_date'] = $this->toIso8601String($params['expire_date']);
         }
 
-        return $type === 'redirect' ?
+        return $this->options['submit_type'] === 'redirect' ?
             array_merge([
                 'cmd' => $cmd,
                 'cust_id' => $this->options['cust_id'],
