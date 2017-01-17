@@ -21,10 +21,6 @@ class GetTransactionDataAction extends BaseApiAwareAction
 
         $result = $this->api->getTransactionData((array) $details);
 
-        if (isset($result['status']) === true && $result['status'] === '-1') {
-            return;
-        }
-
         $details->replace($result);
     }
 

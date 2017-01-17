@@ -21,11 +21,7 @@ class SyncActionTest extends PHPUnit_Framework_TestCase
 
         $request = m::spy('Payum\Core\Request\Sync');
         $gateway = m::spy('Payum\Core\GatewayInterface');
-        $details = new ArrayObject([
-            'cust_order_no' => 'foo.cust_order_no',
-            'order_amount' => 'foo.order_amount',
-            'refund_amount' => 'foo.refund_amount',
-        ]);
+        $details = new ArrayObject([]);
 
         /*
         |------------------------------------------------------------

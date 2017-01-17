@@ -19,6 +19,7 @@ class CaptureActionTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
+        $api = m::spy('PayumTW\Collect\Api');
         $request = m::spy('Payum\Core\Request\Capture');
         $gateway = m::spy('Payum\Core\GatewayInterface');
         $token = m::spy('Payum\Core\Model\TokenInterface');
@@ -54,6 +55,7 @@ class CaptureActionTest extends PHPUnit_Framework_TestCase
             ->shouldReceive('createNotifyToken')->with($gatewayName, $details)->andReturn($notifyToken);
 
         $action = new CaptureAction();
+        $action->setApi($api);
         $action->setGateway($gateway);
         $action->setGenericTokenFactory($genericTokenFactory);
         $action->execute($request);
@@ -78,7 +80,7 @@ class CaptureActionTest extends PHPUnit_Framework_TestCase
         $gateway->shouldHaveReceived('execute')->with(m::type('PayumTW\Collect\Request\Api\CreateTransaction'))->once();
     }
 
-    public function test_captured()
+    public function test_capture_success()
     {
         /*
         |------------------------------------------------------------
@@ -86,6 +88,7 @@ class CaptureActionTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
+        $api = m::spy('PayumTW\Collect\Api');
         $request = m::spy('Payum\Core\Request\Capture');
         $gateway = m::spy('Payum\Core\GatewayInterface');
         $genericTokenFactory = m::spy('Payum\Core\Security\GenericTokenFactoryInterface');
@@ -124,7 +127,11 @@ class CaptureActionTest extends PHPUnit_Framework_TestCase
                 return $httpRquest;
             });
 
+        $api
+            ->shouldReceive('verifyHash')->with($data)->andReturn(true);
+
         $action = new CaptureAction();
+        $action->setApi($api);
         $action->setGateway($gateway);
         $action->setGenericTokenFactory($genericTokenFactory);
         $action->execute($request);
@@ -135,8 +142,87 @@ class CaptureActionTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
+        $this->assertSame(array_merge([
+            'cust_order_no' => 'foo.cust_order_no',
+            'order_amount' => 'foo.order_amount',
+            'order_detail' => 'foo.order_detail',
+        ], $data), $details->toUnsafeArray());
+
         $request->shouldHaveReceived('getModel')->twice();
         $gateway->shouldHaveReceived('execute')->with(m::type('Payum\Core\Request\GetHttpRequest'))->once();
-        $gateway->shouldHaveReceived('execute')->with(m::type('Payum\Core\Request\Sync'))->once();
+        $api->shouldHaveReceived('verifyHash')->with($data)->once();
+    }
+
+    public function test_capture_fail()
+    {
+        /*
+        |------------------------------------------------------------
+        | Arrange
+        |------------------------------------------------------------
+        */
+
+        $api = m::spy('PayumTW\Collect\Api');
+        $request = m::spy('Payum\Core\Request\Capture');
+        $gateway = m::spy('Payum\Core\GatewayInterface');
+        $genericTokenFactory = m::spy('Payum\Core\Security\GenericTokenFactoryInterface');
+
+        $details = new ArrayObject([
+            'cust_order_no' => 'foo.cust_order_no',
+            'order_amount' => 'foo.order_amount',
+            'order_detail' => 'foo.order_detail',
+        ]);
+
+        $data = [
+            'ret' => 'OK',
+            'cust_order_no' => '20120403000003',
+            'order_amount' => '12345',
+            'send_time' => '2013-04-03 07:17:25',
+            'acquire_time' => '2013-04-03 07:19:32',
+            'auth_code' => '851425',
+            'card_no' => '0085',
+            'notify_time' => '2013-04-03 07:19:46',
+            'chk' => 'a1eeb49d7a559393d05f5bbd81fbba84',
+        ];
+
+        /*
+        |------------------------------------------------------------
+        | Act
+        |------------------------------------------------------------
+        */
+
+        $request
+            ->shouldReceive('getModel')->andReturn($details);
+
+        $gateway
+            ->shouldReceive('execute')->with(m::type('Payum\Core\Request\GetHttpRequest'))->andReturnUsing(function ($httpRquest) use ($data) {
+                $httpRquest->request = $data;
+
+                return $httpRquest;
+            });
+
+        $api
+            ->shouldReceive('verifyHash')->with($data)->andReturn(false);
+
+        $action = new CaptureAction();
+        $action->setApi($api);
+        $action->setGateway($gateway);
+        $action->setGenericTokenFactory($genericTokenFactory);
+        $action->execute($request);
+
+        /*
+        |------------------------------------------------------------
+        | Assert
+        |------------------------------------------------------------
+        */
+
+        $this->assertSame(array_merge([
+            'cust_order_no' => 'foo.cust_order_no',
+            'order_amount' => 'foo.order_amount',
+            'order_detail' => 'foo.order_detail',
+        ], $data, ['ret' => 'FAIL']), $details->toUnsafeArray());
+
+        $request->shouldHaveReceived('getModel')->twice();
+        $gateway->shouldHaveReceived('execute')->with(m::type('Payum\Core\Request\GetHttpRequest'))->once();
+        $api->shouldHaveReceived('verifyHash')->with($data)->once();
     }
 }

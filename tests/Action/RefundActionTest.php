@@ -48,6 +48,5 @@ class RefundActionTest extends PHPUnit_Framework_TestCase
 
         $request->shouldHaveReceived('getModel')->twice();
         $gateway->shouldHaveReceived('execute')->with(m::type('PayumTW\Collect\Request\Api\RefundTransaction'))->once();
-        $gateway->shouldHaveReceived('execute')->with(m::type('Payum\Core\Request\Sync'))->once();
     }
 }

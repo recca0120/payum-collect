@@ -58,34 +58,11 @@ class CollectCvsApi extends Api
     /**
      * getTransactionData.
      *
-     * @param mixed $params
-     *
-     * @return array
-     */
-    public function getTransactionData(array $params)
-    {
-        if (
-            isset($params['api_id']) === true ||
-            isset($params['response']) === true && isset($params['response']['api_id'])
-        ) {
-            return parent::getTransactionData($params);
-        }
-
-        if (isset($params['response']) === true) {
-            return $params['response'];
-        }
-
-        return $params;
-    }
-
-    /**
-     * createOrderQueryTransaction.
-     *
      * @param array $params
      *
      * @return string
      */
-    public function createOrderQueryTransaction(array $params)
+    public function getTransactionData(array $params)
     {
         $supportedParams = [
             'process_code_update_time_begin' => Carbon::now(static::TIMEZONE)->toDateTimeString(),

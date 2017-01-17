@@ -75,7 +75,7 @@ class CollectCvsApiTest extends PHPUnit_Framework_TestCase
         $this->assertSame('https://www.ccat.com.tw/cvs/ap_interface.php', $api->getApiEndpoint());
     }
 
-    public function test_get_transaction_data_form_apn()
+    public function test_apn_verify_hash()
     {
         /*
         |------------------------------------------------------------
@@ -112,7 +112,7 @@ class CollectCvsApiTest extends PHPUnit_Framework_TestCase
 
         $checksum = md5($apiId.':'.$transId.':'.$amount.':'.$status.':'.$nonce);
 
-        $returnValue = [
+        $details = [
             'api_id' => $apiId,
             'trans_id' => $transId,
             'order_no' => $orderNo,
@@ -128,8 +128,6 @@ class CollectCvsApiTest extends PHPUnit_Framework_TestCase
             'checksum' => $checksum,
         ];
 
-        $details = $returnValue;
-
         /*
         |------------------------------------------------------------
         | Act
@@ -144,10 +142,10 @@ class CollectCvsApiTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $this->assertSame($returnValue, $api->getTransactionData($details));
+        $this->assertTrue($api->verifyHash($details));
     }
 
-    public function test_get_transaction_data_form_apn_when_verify_hash_is_fail()
+    public function test_apn_verify_hash_is_fail()
     {
         /*
         |------------------------------------------------------------
@@ -184,7 +182,7 @@ class CollectCvsApiTest extends PHPUnit_Framework_TestCase
 
         $checksum = 'a'.md5($apiId.':'.$transId.':'.$amount.':'.$status.':'.$nonce);
 
-        $returnValue = [
+        $details = [
             'api_id' => $apiId,
             'trans_id' => $transId,
             'order_no' => $orderNo,
@@ -200,8 +198,6 @@ class CollectCvsApiTest extends PHPUnit_Framework_TestCase
             'checksum' => $checksum,
         ];
 
-        $details = $returnValue;
-
         /*
         |------------------------------------------------------------
         | Act
@@ -216,9 +212,7 @@ class CollectCvsApiTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $this->assertSame([
-            'status' => '-1',
-        ], $api->getTransactionData($details));
+        $this->assertFalse($api->verifyHash($details));
     }
 
     public function test_parse_response_xml()
@@ -537,7 +531,7 @@ class CollectCvsApiTest extends PHPUnit_Framework_TestCase
         ], $api->parseResponseXML($responseXML));
     }
 
-    public function test_create_order_query_transaction()
+    public function test_get_transaction_data()
     {
         /*
         |------------------------------------------------------------
@@ -689,7 +683,7 @@ class CollectCvsApiTest extends PHPUnit_Framework_TestCase
                     'grant_date' => '',
                 ],
             ],
-        ], $api->createOrderQueryTransaction($order));
+        ], $api->getTransactionData($order));
 
         $messageFactory->shouldHaveReceived('createRequest')->with('POST', $api->getApiEndpoint('sync'), $headers, m::on(function ($body) use ($api, $options, $order) {
             return $body === $api->createRequestXML($order, 'cvs_order_query');

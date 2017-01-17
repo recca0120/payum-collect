@@ -256,7 +256,7 @@ class CollectUnionpayApiTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($api->verifyHash($returnValue));
     }
 
-    public function test_get_transaction_data_form_request()
+    public function test_verify_hash()
     {
         /*
         |------------------------------------------------------------
@@ -286,7 +286,7 @@ class CollectUnionpayApiTest extends PHPUnit_Framework_TestCase
 
         $chk = md5($hashBase.'$'.$orderAmount.'$'.$sendTime.'$'.$ret.'$'.$acquireTime.'$'.$authCode.'$'.$cardNo.'$'.$notifyTime.'$'.$custOrderNo);
 
-        $returnValue = [
+        $details = [
             'ret' => $ret,
             'cust_order_no' => $custOrderNo,
             'order_amount' => $orderAmount,
@@ -296,10 +296,6 @@ class CollectUnionpayApiTest extends PHPUnit_Framework_TestCase
             'card_no' => $cardNo,
             'notify_time' => $notifyTime,
             'chk' => $chk,
-        ];
-
-        $details = [
-            'response' => $returnValue,
         ];
 
         /*
@@ -316,10 +312,10 @@ class CollectUnionpayApiTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $this->assertSame($returnValue, $api->getTransactionData($details));
+        $this->assertTrue($api->verifyHash($details));
     }
 
-    public function test_get_transaction_data_form_request_when_verify_hash_is_fail()
+    public function test_verify_hash_is_fail()
     {
         /*
         |------------------------------------------------------------
@@ -349,7 +345,7 @@ class CollectUnionpayApiTest extends PHPUnit_Framework_TestCase
 
         $chk = 'a'.md5($hashBase.'$'.$orderAmount.'$'.$sendTime.'$'.$ret.'$'.$acquireTime.'$'.$authCode.'$'.$cardNo.'$'.$notifyTime.'$'.$custOrderNo);
 
-        $returnValue = [
+        $details = [
             'ret' => $ret,
             'cust_order_no' => $custOrderNo,
             'order_amount' => $orderAmount,
@@ -359,10 +355,6 @@ class CollectUnionpayApiTest extends PHPUnit_Framework_TestCase
             'card_no' => $cardNo,
             'notify_time' => $notifyTime,
             'chk' => $chk,
-        ];
-
-        $details = [
-            'response' => $returnValue,
         ];
 
         /*
@@ -379,12 +371,10 @@ class CollectUnionpayApiTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $this->assertSame([
-            'status' => '-1',
-        ], $api->getTransactionData($details));
+        $this->assertFalse($api->verifyHash($details));
     }
 
-    public function test_get_transaction_data_form_apn()
+    public function test_apn_verify_hash()
     {
         /*
         |------------------------------------------------------------
@@ -421,7 +411,7 @@ class CollectUnionpayApiTest extends PHPUnit_Framework_TestCase
 
         $checksum = md5($apiId.':'.$transId.':'.$amount.':'.$status.':'.$nonce);
 
-        $returnValue = [
+        $details = [
             'api_id' => $apiId,
             'trans_id' => $transId,
             'order_no' => $orderNo,
@@ -437,8 +427,6 @@ class CollectUnionpayApiTest extends PHPUnit_Framework_TestCase
             'checksum' => $checksum,
         ];
 
-        $details = $returnValue;
-
         /*
         |------------------------------------------------------------
         | Act
@@ -453,10 +441,10 @@ class CollectUnionpayApiTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $this->assertSame($returnValue, $api->getTransactionData($details));
+        $this->assertTrue($api->verifyHash($details));
     }
 
-    public function test_get_transaction_data_form_apn_when_verify_hash_is_fail()
+    public function test_apn_verify_hash_is_fail()
     {
         /*
         |------------------------------------------------------------
@@ -493,7 +481,7 @@ class CollectUnionpayApiTest extends PHPUnit_Framework_TestCase
 
         $checksum = 'a'.md5($apiId.':'.$transId.':'.$amount.':'.$status.':'.$nonce);
 
-        $returnValue = [
+        $details = [
             'api_id' => $apiId,
             'trans_id' => $transId,
             'order_no' => $orderNo,
@@ -509,8 +497,6 @@ class CollectUnionpayApiTest extends PHPUnit_Framework_TestCase
             'checksum' => $checksum,
         ];
 
-        $details = $returnValue;
-
         /*
         |------------------------------------------------------------
         | Act
@@ -525,8 +511,6 @@ class CollectUnionpayApiTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $this->assertSame([
-            'status' => '-1',
-        ], $api->getTransactionData($details));
+        $this->assertFalse($api->verifyHash($details));
     }
 }

@@ -87,37 +87,6 @@ abstract class Api
     abstract public function createTransaction(array $params);
 
     /**
-     * getTransactionData.
-     *
-     * @param mixed $params
-     *
-     * @return array
-     */
-    public function getTransactionData(array $params)
-    {
-        $details = [];
-
-        if (empty($params['response']) === false) {
-            if ($this->verifyHash($params['response']) === false) {
-                $details['status'] = '-1';
-
-                return $details;
-            } else {
-                $details = array_merge($details, $params['response']);
-            }
-        } else {
-            if ($this->verifyHash($params) === false) {
-                $details['status'] = '-1';
-
-                return $details;
-            }
-            $details = array_merge($details, $params);
-        }
-
-        return $details;
-    }
-
-    /**
      * Verify if the hash of the given parameter is correct.
      *
      * @param array $params

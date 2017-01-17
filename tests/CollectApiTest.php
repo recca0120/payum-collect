@@ -335,135 +335,7 @@ class CollectApiTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($api->verifyHash($returnValue));
     }
 
-    public function test_get_transaction_data_form_request()
-    {
-        /*
-        |------------------------------------------------------------
-        | Arrange
-        |------------------------------------------------------------
-        */
-
-        $httpClient = m::spy('Payum\Core\HttpClientInterface');
-        $messageFactory = m::spy('Http\Message\MessageFactory');
-
-        $linkId = 'foo.link_id';
-        $hashBase = 'foo.hash_base';
-
-        $ret = 'OK';
-        $custOrderNo = 12345;
-        $orderAmount = 12345;
-        $sendTime = Carbon::now(static::TIMEZONE)->toDateTimeString();
-        $acquireTime = Carbon::now(static::TIMEZONE)->toDateTimeString();
-        $authCode = '156348';
-        $cardNo = '6200';
-        $notifyTime = Carbon::now(static::TIMEZONE)->toDateTimeString();
-
-        $options = [
-            'link_id' => $linkId,
-            'hash_base' => $hashBase,
-        ];
-
-        $chk = md5($hashBase.'$'.$orderAmount.'$'.$sendTime.'$'.$ret.'$'.$acquireTime.'$'.$authCode.'$'.$cardNo.'$'.$notifyTime.'$'.$custOrderNo);
-
-        $returnValue = [
-            'ret' => $ret,
-            'cust_order_no' => $custOrderNo,
-            'order_amount' => $orderAmount,
-            'send_time' => $sendTime,
-            'acquire_time' => $acquireTime,
-            'auth_code' => $authCode,
-            'card_no' => $cardNo,
-            'notify_time' => $notifyTime,
-            'chk' => $chk,
-        ];
-
-        $details = [
-            'response' => $returnValue,
-        ];
-
-        /*
-        |------------------------------------------------------------
-        | Act
-        |------------------------------------------------------------
-        */
-
-        $api = new CollectApi($options, $httpClient, $messageFactory);
-
-        /*
-        |------------------------------------------------------------
-        | Assert
-        |------------------------------------------------------------
-        */
-
-        $this->assertSame($returnValue, $api->getTransactionData($details));
-    }
-
-    public function test_get_transaction_data_form_request_when_verify_hash_is_fail()
-    {
-        /*
-        |------------------------------------------------------------
-        | Arrange
-        |------------------------------------------------------------
-        */
-
-        $httpClient = m::spy('Payum\Core\HttpClientInterface');
-        $messageFactory = m::spy('Http\Message\MessageFactory');
-
-        $linkId = 'foo.link_id';
-        $hashBase = 'foo.hash_base';
-
-        $ret = 'OK';
-        $custOrderNo = 12345;
-        $orderAmount = 12345;
-        $sendTime = Carbon::now(static::TIMEZONE)->toDateTimeString();
-        $acquireTime = Carbon::now(static::TIMEZONE)->toDateTimeString();
-        $authCode = '156348';
-        $cardNo = '6200';
-        $notifyTime = Carbon::now(static::TIMEZONE)->toDateTimeString();
-
-        $options = [
-            'link_id' => $linkId,
-            'hash_base' => $hashBase,
-        ];
-
-        $chk = 'a'.md5($hashBase.'$'.$orderAmount.'$'.$sendTime.'$'.$ret.'$'.$acquireTime.'$'.$authCode.'$'.$cardNo.'$'.$notifyTime.'$'.$custOrderNo);
-
-        $returnValue = [
-            'ret' => $ret,
-            'cust_order_no' => $custOrderNo,
-            'order_amount' => $orderAmount,
-            'send_time' => $sendTime,
-            'acquire_time' => $acquireTime,
-            'auth_code' => $authCode,
-            'card_no' => $cardNo,
-            'notify_time' => $notifyTime,
-            'chk' => $chk,
-        ];
-
-        $details = [
-            'response' => $returnValue,
-        ];
-
-        /*
-        |------------------------------------------------------------
-        | Act
-        |------------------------------------------------------------
-        */
-
-        $api = new CollectApi($options, $httpClient, $messageFactory);
-
-        /*
-        |------------------------------------------------------------
-        | Assert
-        |------------------------------------------------------------
-        */
-
-        $this->assertSame([
-            'status' => '-1',
-        ], $api->getTransactionData($details));
-    }
-
-    public function test_get_transaction_data_form_apn()
+    public function test_apn_verify_hash_is_success()
     {
         /*
         |------------------------------------------------------------
@@ -532,10 +404,10 @@ class CollectApiTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $this->assertSame($returnValue, $api->getTransactionData($details));
+        $this->assertTrue($api->verifyHash($details));
     }
 
-    public function test_get_transaction_data_form_apn_when_verify_hash_is_fail()
+    public function test_apn_verify_hash_is_fail()
     {
         /*
         |------------------------------------------------------------
@@ -572,7 +444,7 @@ class CollectApiTest extends PHPUnit_Framework_TestCase
 
         $checksum = 'a'.md5($apiId.':'.$transId.':'.$amount.':'.$status.':'.$nonce);
 
-        $returnValue = [
+        $details = [
             'api_id' => $apiId,
             'trans_id' => $transId,
             'order_no' => $orderNo,
@@ -588,8 +460,6 @@ class CollectApiTest extends PHPUnit_Framework_TestCase
             'checksum' => $checksum,
         ];
 
-        $details = $returnValue;
-
         /*
         |------------------------------------------------------------
         | Act
@@ -604,8 +474,6 @@ class CollectApiTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $this->assertSame([
-            'status' => '-1',
-        ], $api->getTransactionData($details));
+        $this->assertFalse($api->verifyHash($details));
     }
 }
