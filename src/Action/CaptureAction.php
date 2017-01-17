@@ -2,19 +2,19 @@
 
 namespace PayumTW\Collect\Action;
 
-use Payum\Core\Request\Sync;
 use Payum\Core\Request\Capture;
 use Payum\Core\GatewayAwareTrait;
 use Payum\Core\GatewayAwareInterface;
 use Payum\Core\Action\ActionInterface;
 use Payum\Core\Bridge\Spl\ArrayObject;
 use Payum\Core\Request\GetHttpRequest;
+use PayumTW\Collect\Action\Api\BaseApiAwareAction;
 use PayumTW\Collect\Request\Api\CreateTransaction;
 use Payum\Core\Exception\RequestNotSupportedException;
 use Payum\Core\Security\GenericTokenFactoryAwareTrait;
 use Payum\Core\Security\GenericTokenFactoryAwareInterface;
 
-class CaptureAction implements ActionInterface, GatewayAwareInterface, GenericTokenFactoryAwareInterface
+class CaptureAction extends BaseApiAwareAction implements ActionInterface, GatewayAwareInterface, GenericTokenFactoryAwareInterface
 {
     use GatewayAwareTrait;
     use GenericTokenFactoryAwareTrait;
@@ -33,12 +33,21 @@ class CaptureAction implements ActionInterface, GatewayAwareInterface, GenericTo
         $httpRequest = new GetHttpRequest();
         $this->gateway->execute($httpRequest);
 
-        if (
-            isset($httpRequest->request['ret']) === true ||
-            // CVS
-            isset($httpRequest->request['status']) === true
-        ) {
-            $this->gateway->execute(new Sync($details));
+        if (isset($httpRequest->request['ret']) === true) {
+            if ($this->api->verifyHash($httpRequest->request) === false) {
+                $httpRequest->request['ret'] = 'FAIL';
+            }
+            $details->replace($httpRequest->request);
+
+            return;
+        }
+
+        // CVS
+        if (isset($httpRequest->request['status']) === true) {
+            if ($this->api->verifyHash($httpRequest->request) === false) {
+                $httpRequest->request['status'] = 'ERROR';
+            }
+            $details->replace($httpRequest->request);
 
             return;
         }

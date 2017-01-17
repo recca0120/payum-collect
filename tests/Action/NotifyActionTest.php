@@ -99,7 +99,6 @@ class NotifyActionTest extends PHPUnit_Framework_TestCase
         $request->shouldHaveReceived('getModel')->twice();
         $gateway->shouldHaveReceived('execute')->with(m::type('Payum\Core\Request\GetHttpRequest'))->once();
         $api->shouldHaveReceived('verifyHash')->with($returnValue)->once();
-        $gateway->shouldHaveReceived('execute')->with(m::type('Payum\Core\Request\Sync'))->once();
     }
 
     public function test_notify_when_checksum_fail()

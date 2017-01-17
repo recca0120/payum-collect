@@ -4,7 +4,6 @@ namespace PayumTW\Collect;
 
 use Payum\Core\GatewayFactory;
 use Payum\Core\Bridge\Spl\ArrayObject;
-use PayumTW\Collect\Action\SyncAction;
 use PayumTW\Collect\Action\NotifyAction;
 use PayumTW\Collect\Action\StatusAction;
 use PayumTW\Collect\Action\CaptureAction;
@@ -27,7 +26,6 @@ class CollectCvsGatewayFactory extends GatewayFactory
             'payum.action.capture' => new CaptureAction(),
             'payum.action.notify' => new NotifyAction(),
             'payum.action.notify_null' => new NotifyNullAction(),
-            'payum.action.sync' => new SyncAction(),
             'payum.action.status' => new StatusAction(),
             'payum.action.convert_payment' => new ConvertPaymentAction(),
 
