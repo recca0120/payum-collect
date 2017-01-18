@@ -21,14 +21,13 @@ class CancelTransactionActionTest extends PHPUnit_Framework_TestCase
 
         $request = m::spy('PayumTW\Collect\Request\Api\CancelTransaction, ArrayAccess');
         $api = m::spy('PayumTW\Collect\Api');
-        $input = [
+
+        $details = new ArrayObject([
             'cust_order_no' => 'foo.cust_order_no',
             'order_amount' => 'foo.order_amount',
-        ];
-        $details = new ArrayObject($input);
+        ]);
 
         $endpoint = 'foo.endpoint';
-        $data = ['foo.data'];
 
         /*
         |------------------------------------------------------------
@@ -40,7 +39,7 @@ class CancelTransactionActionTest extends PHPUnit_Framework_TestCase
             ->shouldReceive('getModel')->andReturn($details);
 
         $api
-            ->shouldReceive('cancelTransaction')->andReturn($details);
+            ->shouldReceive('cancelTransaction')->with($details->toUnsafeArray())->andReturn($details->toUnsafeArray());
 
         $action = new CancelTransactionAction();
         $action->setApi($api);
@@ -53,7 +52,7 @@ class CancelTransactionActionTest extends PHPUnit_Framework_TestCase
 
         $action->execute($request);
         $request->shouldHaveReceived('getModel')->twice();
-        $api->shouldHaveReceived('cancelTransaction')->with($input)->once();
+        $api->shouldHaveReceived('cancelTransaction')->with($details->toUnsafeArray())->once();
     }
 
     /**
