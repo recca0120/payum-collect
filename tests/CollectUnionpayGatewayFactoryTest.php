@@ -1,52 +1,34 @@
 <?php
 
+namespace PayumTW\Collect\Tests;
+
 use Mockery as m;
+use PHPUnit\Framework\TestCase;
 use Payum\Core\Bridge\Spl\ArrayObject;
 use PayumTW\Collect\CollectUnionpayGatewayFactory;
 
-class CollectUnionpayGatewayFactoryTest extends PHPUnit_Framework_TestCase
+class CollectUnionpayGatewayFactoryTest extends TestCase
 {
-    public function tearDown()
+    protected function tearDown()
     {
         m::close();
     }
 
-    public function test_create_config()
+    public function testCreateConfig()
     {
-        /*
-        |------------------------------------------------------------
-        | Arrange
-        |------------------------------------------------------------
-        */
-
-        $linkId = 'foo.link_id';
-        $hashBase = 'foo.hash_base';
-        $httpClient = m::spy('Payum\Core\HttpClientInterface');
-        $messageFactory = m::spy('Http\Message\MessageFactory');
-        /*
-        |------------------------------------------------------------
-        | Act
-        |------------------------------------------------------------
-        */
-
         $gateway = new CollectUnionpayGatewayFactory();
         $config = $gateway->createConfig([
-            'api' => false,
-            'link_id' => $linkId,
-            'hash_base' => $hashBase,
-            'payum.http_client' => $httpClient,
-            'httplug.message_factory' => $messageFactory,
+            'link_id' => 'foo',
+            'hash_base' => 'foo',
+            'payum.api' => false,
+            'payum.required_options' => [],
+            'payum.http_client' => $httpClient = m::mock('Payum\Core\HttpClientInterface'),
+            'httplug.message_factory' => $messageFactory = m::mock('Http\Message\MessageFactory'),
         ]);
-        $api = call_user_func($config['payum.api'], ArrayObject::ensureArrayObject($config));
 
-        /*
-        |------------------------------------------------------------
-        | Assert
-        |------------------------------------------------------------
-        */
-
-        $this->assertSame($linkId, $config['link_id']);
-        $this->assertSame($hashBase, $config['hash_base']);
-        $this->assertInstanceOf('PayumTW\Collect\CollectUnionpayApi', $api);
+        $this->assertInstanceOf(
+            'PayumTW\Collect\Api',
+            $config['payum.api'](ArrayObject::ensureArrayObject($config))
+        );
     }
 }

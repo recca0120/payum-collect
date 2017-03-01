@@ -1,72 +1,39 @@
 <?php
 
+namespace PayumTW\Collect\Tests\Action;
+
 use Mockery as m;
-use Payum\Core\Bridge\Spl\ArrayObject;
+use Payum\Core\Request\Convert;
+use PHPUnit\Framework\TestCase;
 use PayumTW\Collect\Action\ConvertPaymentAction;
 
-class ConvertPaymentActionTest extends PHPUnit_Framework_TestCase
+class ConvertPaymentActionTest extends TestCase
 {
-    public function tearDown()
+    protected function tearDown()
     {
         m::close();
     }
 
-    public function test_execute()
+    public function testExecute()
     {
-        /*
-        |------------------------------------------------------------
-        | Arrange
-        |------------------------------------------------------------
-        */
-
-        $request = m::spy('Payum\Core\Request\Convert');
-        $source = m::spy('Payum\Core\Model\PaymentInterface');
-        $details = new ArrayObject();
-
-        $number = uniqid();
-        $totalAmount = 1000;
-        $description = 'foo.description';
-        $clientEmail = 'foo.email';
-
-        /*
-        |------------------------------------------------------------
-        | Act
-        |------------------------------------------------------------
-        */
-
-        $request
-            ->shouldReceive('getSource')->andReturn($source)
-            ->shouldReceive('getTo')->andReturn('array');
-
-        $source
-            ->shouldReceive('getDetails')->andReturn($details)
-            ->shouldReceive('getNumber')->andReturn($number)
-            ->shouldReceive('getTotalAmount')->andReturn($totalAmount)
-            ->shouldReceive('getDescription')->andReturn($description)
-            ->shouldReceive('getClientEmail')->andReturn($clientEmail);
-
         $action = new ConvertPaymentAction();
+        $request = new Convert(
+            $payment = m::mock('Payum\Core\Model\PaymentInterface'),
+            $to = 'array'
+        );
+        $payment->shouldReceive('getDetails')->once()->andReturn([]);
+        $payment->shouldReceive('getNumber')->once()->andReturn($number = 'foo');
+        $payment->shouldReceive('getClientEmail')->once()->andReturn($clientEmail = 'foo');
+        $payment->shouldReceive('getTotalAmount')->once()->andReturn($totalAmount = 'foo');
+        $payment->shouldReceive('getDescription')->once()->andReturn($description = 'foo');
+
         $action->execute($request);
-
-        /*
-        |------------------------------------------------------------
-        | Assert
-        |------------------------------------------------------------
-        */
-
-        $request->shouldHaveReceived('getSource')->twice();
-        $request->shouldHaveReceived('getTo')->once();
-        $source->shouldHaveReceived('getDetails')->once();
-        $source->shouldHaveReceived('getNumber')->once();
-        $source->shouldHaveReceived('getTotalAmount')->once();
-        $source->shouldHaveReceived('getDescription')->once();
-        $source->shouldHaveReceived('getClientEmail')->once();
-        $request->shouldHaveReceived('setResult')->with([
+        $this->assertSame([
             'cust_order_no' => $number,
             'order_amount' => $totalAmount,
             'order_detail' => $description,
             'cust_order_number' => $number,
             'payer_email' => $clientEmail,
-        ])->once();
+        ], $request->getResult());
     }
 }

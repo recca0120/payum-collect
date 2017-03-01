@@ -1,89 +1,37 @@
 <?php
 
+namespace PayumTW\Collect\Tests\Action\Api;
+
 use Mockery as m;
+use PHPUnit\Framework\TestCase;
 use Payum\Core\Bridge\Spl\ArrayObject;
+use PayumTW\Collect\Request\Api\RefundTransaction;
 use PayumTW\Collect\Action\Api\RefundTransactionAction;
 
-class RefundTransactionActionTest extends PHPUnit_Framework_TestCase
+class RefundTransactionActionTest extends TestCase
 {
-    public function tearDown()
+    protected function tearDown()
     {
         m::close();
     }
 
-    public function test_execute()
+    public function testExecute()
     {
-        /*
-        |------------------------------------------------------------
-        | Arrange
-        |------------------------------------------------------------
-        */
-
-        $request = m::spy('PayumTW\Collect\Request\Api\RefundTransaction, ArrayAccess');
-        $api = m::spy('PayumTW\Collect\Api');
-        $input = [
-            'cust_order_no' => 'foo.cust_order_no',
-            'order_amount' => 'foo.order_amount',
-            'refund_amount' => 'foo.refund_amount',
-        ];
-        $details = new ArrayObject($input);
-
-        $endpoint = 'foo.endpoint';
-        $data = ['foo.data'];
-
-        /*
-        |------------------------------------------------------------
-        | Act
-        |------------------------------------------------------------
-        */
-
-        $request
-            ->shouldReceive('getModel')->andReturn($details);
-
-        $api
-            ->shouldReceive('refundTransaction')->andReturn($details);
-
         $action = new RefundTransactionAction();
-        $action->setApi($api);
+        $request = new RefundTransaction(new ArrayObject($details = [
+            'cust_order_no' => 'foo',
+            'order_amount' => 100,
+            'refund_amount' => 100,
+        ]));
 
-        /*
-        |------------------------------------------------------------
-        | Assert
-        |------------------------------------------------------------
-        */
+        $action->setApi(
+            $api = m::mock('PayumTW\Collect\Api')
+        );
+
+        $api->shouldReceive('refundTransaction')->once()->with((array) $request->getModel())->andReturn($params = ['status' => 'OK']);
 
         $action->execute($request);
-        $request->shouldHaveReceived('getModel')->twice();
-        $api->shouldHaveReceived('refundTransaction')->with($input)->once();
-    }
 
-    /**
-     * @expectedException \Payum\Core\Exception\UnsupportedApiException
-     */
-    public function test_throw_exception_when_api_is_error()
-    {
-        /*
-        |------------------------------------------------------------
-        | Arrange
-        |------------------------------------------------------------
-        */
-
-        $request = m::spy('PayumTW\Collect\Request\Api\CancelTransaction, ArrayAccess');
-        $api = m::spy('stdClass');
-
-        /*
-        |------------------------------------------------------------
-        | Act
-        |------------------------------------------------------------
-        */
-
-        $action = new RefundTransactionAction();
-        $action->setApi($api);
-
-        /*
-        |------------------------------------------------------------
-        | Assert
-        |------------------------------------------------------------
-        */
+        $this->assertSame(array_merge($details, $params), (array) $request->getModel());
     }
 }

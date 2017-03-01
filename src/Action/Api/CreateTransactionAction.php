@@ -22,17 +22,17 @@ class CreateTransactionAction extends BaseApiAwareAction
 
         $details->validateNotEmpty(['cust_order_no', 'order_amount', 'order_detail']);
 
-        $result = $this->api->createTransaction((array) $details);
+        $params = $this->api->createTransaction((array) $details);
 
-        if (isset($result['status']) === true) {
-            $details->replace($result);
+        if (isset($params['status']) === true) {
+            $details->replace($params);
 
             return;
         }
 
         throw new HttpPostRedirect(
             $this->api->getApiEndpoint(),
-            $result
+            $params
         );
     }
 

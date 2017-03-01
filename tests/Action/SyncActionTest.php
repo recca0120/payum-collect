@@ -1,48 +1,33 @@
 <?php
 
+namespace PayumTW\Collect\Tests\Action;
+
 use Mockery as m;
+use Payum\Core\Request\Sync;
+use PHPUnit\Framework\TestCase;
 use Payum\Core\Bridge\Spl\ArrayObject;
 use PayumTW\Collect\Action\SyncAction;
 
-class SyncActionTest extends PHPUnit_Framework_TestCase
+class SyncActionTest extends TestCase
 {
-    public function tearDown()
+    protected function tearDown()
     {
         m::close();
     }
 
-    public function test_sync()
+    public function testExecute()
     {
-        /*
-        |------------------------------------------------------------
-        | Arrange
-        |------------------------------------------------------------
-        */
-
-        $request = m::spy('Payum\Core\Request\Sync');
-        $gateway = m::spy('Payum\Core\GatewayInterface');
-        $details = new ArrayObject([]);
-
-        /*
-        |------------------------------------------------------------
-        | Act
-        |------------------------------------------------------------
-        */
-
-        $request
-            ->shouldReceive('getModel')->andReturn($details);
-
         $action = new SyncAction();
-        $action->setGateway($gateway);
+        $request = new Sync(new ArrayObject([]));
+
+        $action->setGateway(
+            $gateway = m::mock('Payum\Core\GatewayInterface')
+        );
+
+        $gateway->shouldReceive('execute')->once()->with(m::type('PayumTW\Collect\Request\Api\GetTransactionData'));
+
         $action->execute($request);
 
-        /*
-        |------------------------------------------------------------
-        | Assert
-        |------------------------------------------------------------
-        */
-
-        $request->shouldHaveReceived('getModel')->twice();
-        $gateway->shouldHaveReceived('execute')->with(m::type('PayumTW\Collect\Request\Api\GetTransactionData'))->once();
+        $this->assertSame([], (array) $request->getModel());
     }
 }

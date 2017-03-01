@@ -51,15 +51,13 @@ abstract class Api
      */
     protected function doRequest($method, $body, $type = 'cancel', $isJson = true)
     {
-        $headers = [
-            'Content-Type' => 'application/x-www-form-urlencoded',
-        ];
-
         if (is_array($body) === true) {
             $body = http_build_query($body);
         }
 
-        $request = $this->messageFactory->createRequest($method, $this->getApiEndpoint($type), $headers, $body);
+        $request = $this->messageFactory->createRequest($method, $this->getApiEndpoint($type), [
+            'Content-Type' => 'application/x-www-form-urlencoded',
+        ], $body);
 
         $response = $this->client->send($request);
 
