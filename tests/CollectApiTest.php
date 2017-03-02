@@ -3,9 +3,8 @@
 namespace PayumTW\Collect\Tests;
 
 use Mockery as m;
-use Carbon\Carbon;
-use PHPUnit\Framework\TestCase;
 use PayumTW\Collect\CollectApi;
+use PHPUnit\Framework\TestCase;
 
 class CollectApiTest extends TestCase
 {
@@ -47,7 +46,7 @@ class CollectApiTest extends TestCase
             http_build_query(array_merge([
                 'link_id' => $options['link_id'],
             ], $params, [
-                'chk' => $encrypt
+                'chk' => $encrypt,
             ]))
         )->andReturn(
             $request = m::mock('Psr\Http\Message\RequestInterface')

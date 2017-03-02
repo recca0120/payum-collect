@@ -81,7 +81,7 @@ class CollectUnionpayApiTest extends TestCase
             http_build_query(array_merge([
                 'link_id' => $options['link_id'],
             ], $params, [
-                'chk' => $encrypt
+                'chk' => $encrypt,
             ]))
         )->andReturn(
             $request = m::mock('Psr\Http\Message\RequestInterface')
@@ -125,7 +125,7 @@ class CollectUnionpayApiTest extends TestCase
 
         $encrypter->shouldReceive('setKey')->once()->with($options['hash_base'])->andReturnSelf();
         $encrypter->shouldReceive('encrypt')->once()->with($params, [
-            'order_amount', 'send_time', 'ret', 'acquire_time', 'auth_code', 'card_no', 'notify_time', 'cust_order_no'
+            'order_amount', 'send_time', 'ret', 'acquire_time', 'auth_code', 'card_no', 'notify_time', 'cust_order_no',
         ])->andReturn('foo');
 
         $this->assertSame(true, $api->verifyHash($params));
@@ -154,7 +154,7 @@ class CollectUnionpayApiTest extends TestCase
 
         $encrypter->shouldReceive('setKey')->once()->with($options['hash_base'])->andReturnSelf();
         $encrypter->shouldReceive('encrypt')->once()->with($params, [
-            'order_amount', 'send_time', 'ret', 'notify_time', 'cust_order_no'
+            'order_amount', 'send_time', 'ret', 'notify_time', 'cust_order_no',
         ])->andReturn('foo');
 
         $this->assertSame(true, $api->verifyHash($params));
@@ -190,7 +190,7 @@ class CollectUnionpayApiTest extends TestCase
 
         $encrypter->shouldReceive('setKey')->once()->with($options['hash_base'])->andReturnSelf();
         $encrypter->shouldReceive('encrypt')->once()->with($params, [
-            'api_id', 'trans_id', 'amount', 'status', 'nonce'
+            'api_id', 'trans_id', 'amount', 'status', 'nonce',
         ])->andReturn('foo');
 
         $this->assertSame(true, $api->verifyHash($params));

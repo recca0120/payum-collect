@@ -3,8 +3,8 @@
 namespace PayumTW\Collect\Tests\Action;
 
 use Mockery as m;
-use PHPUnit\Framework\TestCase;
 use Payum\Core\Request\Capture;
+use PHPUnit\Framework\TestCase;
 use Payum\Core\Bridge\Spl\ArrayObject;
 use Payum\Core\Request\GetHttpRequest;
 use PayumTW\Collect\Action\CaptureAction;
@@ -25,7 +25,7 @@ class CaptureActionTest extends TestCase
             $gateway = m::mock('Payum\Core\GatewayInterface')
         );
 
-        $gateway->shouldReceive('execute')->once()->with(m::on(function($getHttpRequest) {
+        $gateway->shouldReceive('execute')->once()->with(m::on(function ($getHttpRequest) {
             return $getHttpRequest instanceof GetHttpRequest;
         }));
 
@@ -66,7 +66,7 @@ class CaptureActionTest extends TestCase
         );
 
         $response = ['ret' => 'OK'];
-        $gateway->shouldReceive('execute')->once()->with(m::on(function($getHttpRequest) use ($response) {
+        $gateway->shouldReceive('execute')->once()->with(m::on(function ($getHttpRequest) use ($response) {
             $getHttpRequest->request = $response;
 
             return $getHttpRequest instanceof GetHttpRequest;
@@ -96,7 +96,7 @@ class CaptureActionTest extends TestCase
         );
 
         $response = ['status' => 'OK'];
-        $gateway->shouldReceive('execute')->once()->with(m::on(function($getHttpRequest) use ($response) {
+        $gateway->shouldReceive('execute')->once()->with(m::on(function ($getHttpRequest) use ($response) {
             $getHttpRequest->request = $response;
 
             return $getHttpRequest instanceof GetHttpRequest;

@@ -71,7 +71,7 @@ class CollectCvsApiTest extends TestCase
             'POST',
             $api->getApiEndpoint(''),
             ['Content-Type' => 'application/x-www-form-urlencoded'],
-            m::on(function($xml) use ($options, $params) {
+            m::on(function ($xml) use ($options, $params) {
                 return implode('', array_map('trim', preg_split('/\n|\r\n/', '<?xml version="1.0" encoding="UTF-8"?>
                     <request>
                         <header>
@@ -100,7 +100,7 @@ class CollectCvsApiTest extends TestCase
 
         $response->shouldReceive('getStatusCode')->once()->andReturn(200);
         $response->shouldReceive('getBody->getContents')->once()->andReturn(
-            $contents ='<?xml version="1.0" encoding="UTF-8"?>
+            $contents = '<?xml version="1.0" encoding="UTF-8"?>
                 <response>
                     <status>OK</status>
                     <order>
@@ -166,7 +166,7 @@ class CollectCvsApiTest extends TestCase
             'POST',
             $api->getApiEndpoint(''),
             ['Content-Type' => 'application/x-www-form-urlencoded'],
-            m::on(function($xml) use ($options, $params) {
+            m::on(function ($xml) use ($options, $params) {
                 return implode('', array_map('trim', preg_split('/\n|\r\n/', '<?xml version="1.0" encoding="UTF-8"?>
                     <request>
                         <header>
@@ -190,7 +190,7 @@ class CollectCvsApiTest extends TestCase
 
         $response->shouldReceive('getStatusCode')->once()->andReturn(200);
         $response->shouldReceive('getBody->getContents')->once()->andReturn(
-            $contents ='<?xml version="1.0" encoding="UTF-8"?>
+            $contents = '<?xml version="1.0" encoding="UTF-8"?>
                 <response>
                     <status>OK</status>
                     <order>

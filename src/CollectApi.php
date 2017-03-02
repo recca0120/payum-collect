@@ -51,7 +51,7 @@ class CollectApi extends CollectUnionpayApi
         ));
 
         $params['chk'] = $this->calculateHash($params, [
-            'cust_order_no', 'order_amount', 'send_time'
+            'cust_order_no', 'order_amount', 'send_time',
         ]);
 
         return $this->doRequest('GET', $params, 'cancel');

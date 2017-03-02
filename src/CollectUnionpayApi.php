@@ -94,7 +94,7 @@ class CollectUnionpayApi extends Api
         ));
 
         $params['chk'] = $this->calculateHash($params, [
-            'cust_order_no', 'order_amount', 'refund_amount', 'send_time'
+            'cust_order_no', 'order_amount', 'refund_amount', 'send_time',
         ]);
 
         return $this->doRequest('GET', $params, 'refund');

@@ -23,7 +23,6 @@ class Encrypter
             ? $this->hash($params, ':')
             : $this->hash(array_merge([$this->key], $params), '$');
 
-
         if (isset($params['status']) === true) {
             return hash('md5', implode(':', $params));
         }
