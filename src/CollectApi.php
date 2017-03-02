@@ -50,10 +50,8 @@ class CollectApi extends CollectUnionpayApi
             array_intersect_key($params, $supportedParams)
         ));
 
-        $params['chk'] = $this->calculateHash([
-            $params['cust_order_no'],
-            $params['order_amount'],
-            $params['send_time'],
+        $params['chk'] = $this->calculateHash($params, [
+            'cust_order_no', 'order_amount', 'send_time'
         ]);
 
         return $this->doRequest('GET', $params, 'cancel');

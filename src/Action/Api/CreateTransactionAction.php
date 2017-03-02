@@ -31,8 +31,7 @@ class CreateTransactionAction extends BaseApiAwareAction
         }
 
         throw new HttpPostRedirect(
-            $this->api->getApiEndpoint(),
-            $params
+            $this->api->getApiEndpoint(), $params
         );
     }
 

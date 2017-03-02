@@ -53,7 +53,7 @@ class CaptureAction extends BaseApiAwareAction implements ActionInterface, Gatew
         }
 
         $token = $request->getToken();
-        $targetUrl = $token->getTargetUrl();
+        $targetUrl = rtrim($token->getTargetUrl(), '/');
         $targetUrl = substr($targetUrl, 0, strrpos($targetUrl, '/'));
         $token->setTargetUrl($targetUrl);
         $token->save();

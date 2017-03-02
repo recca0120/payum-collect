@@ -37,11 +37,12 @@ abstract class Api
      *
      * @throws \Payum\Core\Exception\InvalidArgumentException if an option is invalid
      */
-    public function __construct(array $options, HttpClientInterface $client, MessageFactory $messageFactory)
+    public function __construct(array $options, HttpClientInterface $client, MessageFactory $messageFactory, Encrypter $encrypter = null)
     {
         $this->options = $options;
         $this->client = $client;
         $this->messageFactory = $messageFactory;
+        $this->encrypter = $encrypter ?: new Encrypter();
     }
 
     /**
@@ -49,25 +50,24 @@ abstract class Api
      *
      * @return array
      */
-    protected function doRequest($method, $body, $type = 'cancel', $isJson = true)
+    protected function doRequest($method, $params, $type = 'cancel', $isJson = true)
     {
-        if (is_array($body) === true) {
-            $body = http_build_query($body);
-        }
-
         $request = $this->messageFactory->createRequest($method, $this->getApiEndpoint($type), [
             'Content-Type' => 'application/x-www-form-urlencoded',
-        ], $body);
+        ], is_array($params) === true ? http_build_query($params) : $params);
 
         $response = $this->client->send($request);
 
-        if (false == ($response->getStatusCode() >= 200 && $response->getStatusCode() < 300)) {
+        $statusCode = $response->getStatusCode();
+        if (false == ($statusCode >= 200 && $statusCode < 300)) {
             throw HttpException::factory($request, $response);
         }
 
         $contents = $response->getBody()->getContents();
 
-        return $isJson === true ? json_decode($contents, true) : $contents;
+        return $isJson === true
+            ? json_decode($contents, true)
+            : $contents;
     }
 
     /**
@@ -93,51 +93,21 @@ abstract class Api
      */
     public function verifyHash(array $params)
     {
-        $hashKey = 'chk';
+        $filters = [
+            'ok' => ['order_amount', 'send_time', 'ret', 'acquire_time', 'auth_code', 'card_no', 'notify_time', 'cust_order_no'],
+            'fail' => ['order_amount', 'send_time', 'ret', 'notify_time', 'cust_order_no'],
+            'status' => ['api_id', 'trans_id', 'amount', 'status', 'nonce'],
+        ];
 
         if (isset($params['status']) === true) {
             $hashKey = 'checksum';
-            $data = $this->only($params, [
-                'api_id',
-                'trans_id',
-                'amount',
-                'status',
-                'nonce',
-            ]);
-        } elseif ($params['ret'] === 'OK') {
-            $data = $this->only($params, [
-                'order_amount',
-                'send_time',
-                'ret',
-                'acquire_time',
-                'auth_code',
-                'card_no',
-                'notify_time',
-                'cust_order_no',
-            ]);
-        } elseif ($params['ret'] === 'FAIL') {
-            $data = $data = $this->only($params, [
-                'order_amount',
-                'send_time',
-                'ret',
-                'notify_time',
-                'cust_order_no',
-            ]);
+            $filterKeys = $filters['status'];
+        } else {
+            $hashKey = 'chk';
+            $filterKeys = $filters[strtolower($params['ret'])];
         }
 
-        return $params[$hashKey] === $this->calculateHash($data);
-    }
-
-    protected function only($array, $keys)
-    {
-        $results = [];
-        foreach ($keys as $key) {
-            if (isset($array[$key]) === true) {
-                $results[$key] = $array[$key];
-            }
-        }
-
-        return $results;
+        return $params[$hashKey] === $this->calculateHash($params, $filterKeys);
     }
 
     /**
@@ -147,17 +117,10 @@ abstract class Api
      *
      * @return string
      */
-    protected function calculateHash($params)
+    protected function calculateHash($params, $filterKeys = [])
     {
-        if (isset($params['status']) === true) {
-            $symbol = ':';
-        } else {
-            $symbol = '$';
-            $params = array_merge([
-                $this->options['hash_base'],
-            ], $params);
-        }
-
-        return md5(implode($symbol, $params));
+        return $this->encrypter
+            ->setKey($this->options['hash_base'])
+            ->encrypt($params, $filterKeys);
     }
 }

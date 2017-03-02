@@ -9,7 +9,7 @@ class CollectCvsApi extends Api
     /**
      * @return string
      */
-    public function getApiEndpoint($type = 'capture')
+    public function getApiEndpoint($type = '')
     {
         return 'https://www.ccat.com.tw/cvs/ap_interface.php';
     }
@@ -44,14 +44,19 @@ class CollectCvsApi extends Api
             $params['expire_date'] = $this->toIso8601String($params['expire_date']);
         }
 
-        return $this->options['submit_type'] === 'redirect' ?
-            array_merge([
+        return $this->options['submit_type'] === 'redirect'
+            ? array_merge([
                 'cmd' => $cmd,
                 'cust_id' => $this->options['cust_id'],
                 'cust_password' => $this->options['cust_password'],
-            ], $params) :
-            $this->parseResponseXML(
-                $this->doRequest('POST', $this->createRequestXML($params, $cmd), 'sync', false)
+            ], $params)
+            : $this->parseResponseXML(
+                $this->doRequest(
+                    'POST',
+                    $this->createRequestXML($params, $cmd),
+                    '',
+                    false
+                )
             );
     }
 
@@ -78,7 +83,12 @@ class CollectCvsApi extends Api
         $params['process_code_update_time_end'] = $this->toIso8601String($params['process_code_update_time_end']);
 
         return $this->parseResponseXML(
-            $this->doRequest('POST', $this->createRequestXML($params, 'cvs_order_query'), 'sync', false)
+            $this->doRequest(
+                'POST',
+                $this->createRequestXML($params, 'cvs_order_query'),
+                '',
+                false
+            )
         );
     }
 
@@ -142,13 +152,13 @@ class CollectCvsApi extends Api
      */
     protected function parseResponseXML($xml)
     {
-        $result = [
+        $response = [
             'status' => 'ERROR',
             'orders' => [],
         ];
 
         if (preg_match('/<status>(.*)<\/status>/', $xml, $matches) !== false) {
-            $result['status'] = $matches[1];
+            $response['status'] = $matches[1];
         }
 
         if (preg_match_all('/<order>(.*)<\/order>/sU', $xml, $matches) !== false) {
@@ -183,10 +193,10 @@ class CollectCvsApi extends Api
                         $temp[$match['key']] = $match['value'];
                     }
                 }
-                $result['orders'][] = $temp;
+                $response['orders'][] = $temp;
             }
         }
 
-        return $result;
+        return $response;
     }
 }

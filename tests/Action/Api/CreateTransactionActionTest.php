@@ -1,139 +1,61 @@
 <?php
 
+namespace PayumTW\Collect\Tests\Action\Api;
+
 use Mockery as m;
+use PHPUnit\Framework\TestCase;
 use Payum\Core\Bridge\Spl\ArrayObject;
+use Payum\Core\Reply\HttpPostRedirect;
+use PayumTW\Collect\Request\Api\CreateTransaction;
 use PayumTW\Collect\Action\Api\CreateTransactionAction;
 
-class CreateTransactionActionTest extends PHPUnit_Framework_TestCase
+class CreateTransactionActionTest extends TestCase
 {
-    public function tearDown()
+    protected function tearDown()
     {
         m::close();
     }
 
-    /**
-     * @expectedException   \Payum\Core\Reply\HttpPostRedirect
-     */
-    public function test_execute()
+    public function testExecute()
     {
-        /*
-        |------------------------------------------------------------
-        | Arrange
-        |------------------------------------------------------------
-        */
-
-        $request = m::spy('PayumTW\Collect\Request\Api\CreateTransaction, ArrayAccess');
-        $api = m::spy('PayumTW\Collect\Api');
-        $details = new ArrayObject([
-            'cust_order_no' => 'foo.cust_order_no',
-            'order_amount' => 'foo.order_amount',
-            'order_detail' => 'foo.order_detail',
-        ]);
-
-        $endpoint = 'foo.endpoint';
-        $data = ['foo.data'];
-
-        /*
-        |------------------------------------------------------------
-        | Act
-        |------------------------------------------------------------
-        */
-
-        $request
-            ->shouldReceive('getModel')->andReturn($details);
-
-        $api
-            ->shouldReceive('getApiEndpoint')->andReturn($endpoint)
-            ->shouldReceive('createTransaction')->andReturn($data);
-
         $action = new CreateTransactionAction();
-        $action->setApi($api);
-
-        /*
-        |------------------------------------------------------------
-        | Assert
-        |------------------------------------------------------------
-        */
-
-        $action->execute($request);
-        $request->shouldHaveReceived('getModel')->twice();
-        $api->shouldHaveReceived('getApiEndpoint')->once();
-        $api->shouldHaveReceived('createTransaction')->with((array) $details)->once();
-    }
-
-    public function test_create_transaction_by_xml()
-    {
-        /*
-        |------------------------------------------------------------
-        | Arrange
-        |------------------------------------------------------------
-        */
-
-        $request = m::spy('PayumTW\Collect\Request\Api\CreateTransaction, ArrayAccess');
-        $api = m::spy('PayumTW\Collect\Api');
-        $details = m::spy(new ArrayObject([
-            'cust_order_no' => 'foo.cust_order_no',
-            'order_amount' => 'foo.order_amount',
-            'order_detail' => 'foo.order_detail',
+        $request = new CreateTransaction($details = new ArrayObject([
+            'cust_order_no' => 'foo',
+            'order_amount' => 'foo',
+            'order_detail' => 'foo',
         ]));
 
-        $endpoint = 'foo.endpoint';
-        $data = ['status' => 'OK'];
+        $action->setApi(
+            $api = m::mock('PayumTW\Collect\Api')
+        );
 
-        /*
-        |------------------------------------------------------------
-        | Act
-        |------------------------------------------------------------
-        */
+        $api->shouldReceive('createTransaction')->once()->with((array) $details)->andReturn($params = ['foo' => 'bar']);
+        $api->shouldReceive('getApiEndpoint')->once()->andReturn($apiEndpoint = 'foo');
 
-        $request
-            ->shouldReceive('getModel')->andReturn($details);
-
-        $api
-            ->shouldReceive('createTransaction')->andReturn($data);
-
-        $action = new CreateTransactionAction();
-        $action->setApi($api);
-
-        /*
-        |------------------------------------------------------------
-        | Assert
-        |------------------------------------------------------------
-        */
-
-        $action->execute($request);
-        $request->shouldHaveReceived('getModel')->twice();
-        $api->shouldHaveReceived('createTransaction')->with((array) $details)->once();
-        $details->shouldHaveReceived('replace')->with($data)->once();
+        try {
+            $action->execute($request);
+        } catch (HttpPostRedirect $e) {
+            $this->assertSame($apiEndpoint, $e->getUrl());
+            $this->assertSame($params, $e->getFields());
+        }
     }
 
-    /**
-     * @expectedException \Payum\Core\Exception\UnsupportedApiException
-     */
-    public function test_throw_exception_when_api_is_error()
+    public function testExecuteByXML()
     {
-        /*
-        |------------------------------------------------------------
-        | Arrange
-        |------------------------------------------------------------
-        */
-
-        $request = m::spy('PayumTW\Collect\Request\Api\CancelTransaction, ArrayAccess');
-        $api = m::spy('stdClass');
-
-        /*
-        |------------------------------------------------------------
-        | Act
-        |------------------------------------------------------------
-        */
-
         $action = new CreateTransactionAction();
-        $action->setApi($api);
+        $request = new CreateTransaction($details = new ArrayObject([
+            'cust_order_no' => 'foo',
+            'order_amount' => 'foo',
+            'order_detail' => 'foo',
+        ]));
 
-        /*
-        |------------------------------------------------------------
-        | Assert
-        |------------------------------------------------------------
-        */
+        $action->setApi(
+            $api = m::mock('PayumTW\Collect\Api')
+        );
+
+        $api->shouldReceive('createTransaction')->once()->with((array) $details)->andReturn($params = ['status' => 'OK']);
+
+        $action->execute($request);
+        $this->assertSame($params['status'], $details['status']);
     }
 }

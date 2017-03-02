@@ -25,8 +25,7 @@ class NotifyNullAction implements ActionInterface, GatewayAwareInterface
         $httpRequest = new GetHttpRequest();
         $this->gateway->execute($httpRequest);
 
-        $notifyToken = md5($httpRequest->request['order_no']);
-        $getToken = new GetToken($notifyToken);
+        $getToken = new GetToken(md5($httpRequest->request['order_no']));
         $this->gateway->execute($getToken);
         $this->gateway->execute(new Notify($getToken->getToken()));
     }
