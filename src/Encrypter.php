@@ -47,7 +47,6 @@ class Encrypter
         return hash('md5', implode($this->separate, $params));
     }
 
-
     /**
      * filter.
      * @param array $params
