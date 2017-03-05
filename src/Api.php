@@ -55,7 +55,7 @@ abstract class Api
 
     /**
      * @param string $method
-     * @param array $params
+     * @param array|string $params
      * @param string $type
      * @param bool $isJson
      * @return string
@@ -69,7 +69,7 @@ abstract class Api
         $response = $this->client->send($request);
 
         $statusCode = $response->getStatusCode();
-        if (false == ($statusCode >= 200 && $statusCode < 300)) {
+        if (false === ($statusCode >= 200 && $statusCode < 300)) {
             throw HttpException::factory($request, $response);
         }
 

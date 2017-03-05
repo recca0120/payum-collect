@@ -16,9 +16,9 @@ class CollectApi extends CollectUnionpayApi
             'cancel' => 'https://4128888card.com.tw/cocs/client_order_cancel.php',
             'refund' => 'https://4128888card.com.tw/cocs/client_order_refund.php',
         ];
+        // return $this->options['sandbox'] ? 'https://4128888card.com.tw/cocs/client_order_append.php' : 'https://4128888card.com.tw/cocs/client_order_append.php';
 
         return $urls[$type];
-        // return $this->options['sandbox'] ? 'https://4128888card.com.tw/cocs/client_order_append.php' : 'https://4128888card.com.tw/cocs/client_order_append.php';
     }
 
     /**

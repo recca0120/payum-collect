@@ -183,6 +183,7 @@ class CollectCvsApi extends Api
             $regexp = '/<(?<key>'.implode('|', $tags).')>(?<value>[^<]*)<\/('.implode('|', $tags).')>/';
             foreach ($orders as $order) {
                 $temp = [];
+                $matches = [];
                 if (preg_match_all($regexp, $order, $matches, PREG_SET_ORDER) !== false) {
                     foreach ($matches as $match) {
                         $temp[$match['key']] = $match['value'];
