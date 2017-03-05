@@ -18,7 +18,6 @@ class CollectCvsApi extends Api
      * createTransaction.
      *
      * @param array $params
-     *
      * @return array
      */
     public function createTransaction(array $params, $returnType = 'xml')
@@ -64,7 +63,6 @@ class CollectCvsApi extends Api
      * getTransactionData.
      *
      * @param array $params
-     *
      * @return string
      */
     public function getTransactionData(array $params)
@@ -96,7 +94,6 @@ class CollectCvsApi extends Api
      * toIso8601String.
      *
      * @param string $string
-     *
      * @return string
      */
     protected function toIso8601String($string)
@@ -108,7 +105,6 @@ class CollectCvsApi extends Api
      * createQueryRequestXML.
      *
      * @param array $params
-     *
      * @return string
      */
     protected function createRequestXML($params, $cmd = 'cvs_order_regiater')
@@ -147,7 +143,6 @@ class CollectCvsApi extends Api
      * parseResponseXML.
      *
      * @param string $xml
-     *
      * @return array
      */
     protected function parseResponseXML($xml)

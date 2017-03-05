@@ -25,7 +25,6 @@ class CollectApi extends CollectUnionpayApi
      * cancelTransaction.
      *
      * @param array $params
-     *
      * @return array
      */
     public function cancelTransaction(array $params)

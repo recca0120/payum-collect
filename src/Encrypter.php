@@ -4,8 +4,18 @@ namespace PayumTW\Collect;
 
 class Encrypter
 {
-    public $key = null;
+    /**
+     * $key.
+     *
+     * @var string
+     */
+    public $key;
 
+    /**
+     * setKey.
+     *
+     * @param string $key
+     */
     public function setKey($key)
     {
         $this->key = $key;
@@ -13,6 +23,13 @@ class Encrypter
         return $this;
     }
 
+    /**
+     * encrypt.
+     *
+     * @param array $params
+     * @param array $filterKeys
+     * @return string
+     */
     public function encrypt($params, $filterKeys = [])
     {
         if (empty($filterKeys) === false) {
@@ -30,6 +47,13 @@ class Encrypter
         return hash('md5', implode($this->separate, $params));
     }
 
+
+    /**
+     * filter.
+     * @param array $params
+     * @param array $filterKeys
+     * @return array
+     */
     protected function filter($params, $filterKeys)
     {
         $results = [];
@@ -42,6 +66,13 @@ class Encrypter
         return $results;
     }
 
+    /**
+     * hash.
+     *
+     * @param array $params
+     * @param string $separate
+     * @return string
+     */
     protected function hash($params, $separate = '$')
     {
         return hash('md5', implode($separate, $params));

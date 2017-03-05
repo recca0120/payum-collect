@@ -31,6 +31,13 @@ abstract class Api
     protected $options = [];
 
     /**
+     * $encrypter.
+     *
+     * @var Encrypter
+     */
+    protected $encrypter;
+
+    /**
      * @param array $options
      * @param HttpClientInterface $client
      * @param MessageFactory $messageFactory
@@ -46,8 +53,10 @@ abstract class Api
     }
 
     /**
+     * @param string $method
      * @param array $fields
-     *
+     * @param string $type
+     * @param bool $isJson
      * @return array
      */
     protected function doRequest($method, $params, $type = 'cancel', $isJson = true)
@@ -79,7 +88,6 @@ abstract class Api
      * createTransaction.
      *
      * @param array $params
-     *
      * @return array
      */
     abstract public function createTransaction(array $params);
@@ -88,7 +96,6 @@ abstract class Api
      * Verify if the hash of the given parameter is correct.
      *
      * @param array $params
-     *
      * @return bool
      */
     public function verifyHash(array $params)
@@ -114,7 +121,6 @@ abstract class Api
      * calculateHash.
      *
      * @param array $params
-     *
      * @return string
      */
     protected function calculateHash($params, $filterKeys = [])

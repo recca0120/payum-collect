@@ -24,7 +24,6 @@ class CollectUnionpayApi extends Api
      * createTransaction.
      *
      * @param array $params
-     *
      * @return array
      */
     public function createTransaction(array $params)
@@ -67,7 +66,6 @@ class CollectUnionpayApi extends Api
      * refundTransaction.
      *
      * @param array $params
-     *
      * @return array
      */
     public function refundTransaction(array $params)
