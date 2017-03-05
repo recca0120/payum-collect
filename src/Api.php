@@ -55,10 +55,10 @@ abstract class Api
 
     /**
      * @param string $method
-     * @param array $fields
+     * @param array $params
      * @param string $type
      * @param bool $isJson
-     * @return array
+     * @return string
      */
     protected function doRequest($method, $params, $type = 'cancel', $isJson = true)
     {
