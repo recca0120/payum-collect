@@ -16,12 +16,12 @@ abstract class Api
     const TIMEZONE = 'Asia/Taipei';
 
     /**
-     * @var HttpClientInterface
+     * @var \Payum\Core\HttpClientInterface
      */
     protected $client;
 
     /**
-     * @var MessageFactory
+     * @var \Http\Message\MessageFactory
      */
     protected $messageFactory;
 
@@ -39,8 +39,9 @@ abstract class Api
 
     /**
      * @param array $options
-     * @param HttpClientInterface $client
-     * @param MessageFactory $messageFactory
+     * @param \Payum\Core\HttpClientInterface $client
+     * @param \Http\Message\MessageFactory $messageFactory
+     * @param Encrypter $encrypter
      *
      * @throws \Payum\Core\Exception\InvalidArgumentException if an option is invalid
      */
