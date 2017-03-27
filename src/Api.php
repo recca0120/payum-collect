@@ -54,33 +54,6 @@ abstract class Api
     }
 
     /**
-     * @param string $method
-     * @param array|string $params
-     * @param string $type
-     * @param bool $isJson
-     * @return string
-     */
-    protected function doRequest($method, $params, $type = 'cancel', $isJson = true)
-    {
-        $request = $this->messageFactory->createRequest($method, $this->getApiEndpoint($type), [
-            'Content-Type' => 'application/x-www-form-urlencoded',
-        ], is_array($params) === true ? http_build_query($params) : $params);
-
-        $response = $this->client->send($request);
-
-        $statusCode = $response->getStatusCode();
-        if (false === ($statusCode >= 200 && $statusCode < 300)) {
-            throw HttpException::factory($request, $response);
-        }
-
-        $contents = $response->getBody()->getContents();
-
-        return $isJson === true
-            ? json_decode($contents, true)
-            : $contents;
-    }
-
-    /**
      * @return string
      */
     abstract public function getApiEndpoint($type = 'capture');
@@ -116,6 +89,33 @@ abstract class Api
         }
 
         return $params[$hashKey] === $this->calculateHash($params, $filterKeys);
+    }
+
+    /**
+     * @param string $method
+     * @param array|string $params
+     * @param string $type
+     * @param bool $isJson
+     * @return string
+     */
+    protected function doRequest($method, $params, $type = 'cancel', $isJson = true)
+    {
+        $request = $this->messageFactory->createRequest($method, $this->getApiEndpoint($type), [
+            'Content-Type' => 'application/x-www-form-urlencoded',
+        ], is_array($params) === true ? http_build_query($params) : $params);
+
+        $response = $this->client->send($request);
+
+        $statusCode = $response->getStatusCode();
+        if (false === ($statusCode >= 200 && $statusCode < 300)) {
+            throw HttpException::factory($request, $response);
+        }
+
+        $contents = $response->getBody()->getContents();
+
+        return $isJson === true
+            ? json_decode($contents, true)
+            : $contents;
     }
 
     /**
